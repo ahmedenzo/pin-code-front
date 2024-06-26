@@ -1,0 +1,51 @@
+<div class="flex flex-col items-center justify-start min-h-screen p-4 sm:p-10"> 
+  <div class="w-full max-w-5xl flex flex-col sm:flex-row">
+
+    <!-- Description Section -->
+    <div class="prose prose-sm w-full sm:w-1/2 sm:mr-4 sm:order-2">
+      <h2 class="mt-12">Envoi de code PIN Card</h2>
+      <p>
+        Le processus de vérification des informations du titulaire de la carte et l'envoi d'un code PIN par SMS. Voici les étapes impliquées :
+      </p>
+      <ol>
+        <li>Saisissez le numéro de carte, le CIN et le numéro de téléphone.</li>
+        <li>Cliquez sur "Envoyer OTP" pour recevoir un mot de passe à usage unique (OTP) sur votre téléphone.</li>
+        <li>Saisissez l'OTP reçu dans le champ prévu à cet effet.</li>
+        <li>Après la vérification réussie de l'OTP, le code PIN de la carte sera envoyé au numéro de téléphone.</li>
+      </ol>
+    </div>
+
+    <!-- Form Section -->
+    <div class="flex flex-col items-center justify-center w-full sm:w-1/2 sm:order-1">
+      <form class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden w-full max-w-md">
+        <!-- Card Number Field with Icon -->
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>Numéro de Carte</mat-label>
+          <mat-icon matPrefix>creditcard</mat-icon>
+          <input matInput placeholder="Saisissez votre numéro de carte">
+        </mat-form-field>
+
+        <!-- CIN Field with Icon -->
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>CIN</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input matInput placeholder="Saisissez votre CIN">
+        </mat-form-field>
+
+        <!-- Phone Number Field with Icon -->
+        <mat-form-field class="w-full" appearance="fill">
+          <mat-label>Numéro de Téléphone</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput placeholder="Saisissez votre numéro de téléphone">
+        </mat-form-field>
+
+        <!-- Send OTP Button -->
+        <div class="flex justify-center mt-4">
+          <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Envoyer OTP
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

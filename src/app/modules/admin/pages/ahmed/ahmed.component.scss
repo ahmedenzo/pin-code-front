@@ -1,0 +1,189 @@
+
+.container {
+  width: 100%;
+  margin: 20px;
+}
+
+.form-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.form-fields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.table-container {
+  width: 100%;
+  margin-top: 20px;
+
+  &.list-view {
+    table {
+      width: 100%;
+    }
+
+    mat-header-row, mat-row {
+      display: table-row;
+    }
+  }
+  .grid-view {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start; /* Adjust to center or start */
+    align-items: stretch; /* Ensure all cards in a row are the same height */
+    width: 100%; /* Ensure the container takes full width */
+  }
+  
+  .grid-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 20px;
+    background-color: white;
+    width: calc(25% - 20px); /* Adjusted card width for roughly 3 cards per row */
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    flex: 1 1 calc(25% - 20px); /* Ensure cards fill the available space */
+  }
+  
+  .grid-item {
+    margin-bottom: 10px;
+  
+    &:last-child {
+      margin-bottom: 0;
+    }
+  
+    .priority-cell {
+      font-weight: bold;
+      color: red;
+    }
+    
+    .project-cell {
+      font-style: italic;
+      color: blue;
+    }
+  }
+  
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: auto; /* Push buttons to the bottom */
+  }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 25px; /* Adjusted border-radius */
+  padding: 5px 10px;
+  background-color: #fff;
+
+  .search-tags {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+    margin-right: 10px; /* Added margin-right to separate from input */
+    
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .search-tag {
+      background-color: #e0e0e0;
+      border-radius: 12px;
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .remove-tag-button {
+      margin-left: 5px;
+      color: #666;
+      cursor: pointer;
+    }
+    
+  }
+}
+
+.search-input {
+  padding: 10px;
+  border: none;
+  border-radius: 25px; /* Adjusted border-radius */
+  outline: none;
+  width: 300px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  color: #ccc;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.suggestion-category {
+  font-weight: bold;
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.suggestion-items {
+  padding: 5px 10px;
+
+  .suggestion-item {
+    padding: 5px 0;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f1f1f1;
+    }
+  }
+}
+
+.filter-button {
+  margin-left: 20px;
+}
+
+.view-toggle-buttons {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
