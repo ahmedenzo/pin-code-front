@@ -145,8 +145,7 @@ export const appRoutes: Route[] = [
             ]},
 
             // User Interface
-            {path: 'ui', children: [{ path: 'ahmed', loadChildren: () => import('app/modules/admin/pages/ahmed/ahmed.routes') },{ path: 'employee', loadChildren: () => import('app/modules/admin/pages/employee/employee.routes') },{ path: 'product', loadChildren: () => import('app/modules/admin/pages/product/product.routes') },
-
+            {path: 'ui', children: [
 
                 // Material Components
                 {path: 'material-components', loadChildren: () => import('app/modules/admin/ui/material-components/material-components.routes')},

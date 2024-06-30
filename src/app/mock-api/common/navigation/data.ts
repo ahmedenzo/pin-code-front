@@ -167,19 +167,5 @@ export const defaultNavigation: FuseNavigationItem[] = [
 
 
 
-      {
-        id   : 'dashboards.employee',
-        title: 'Employee',
-        type : 'basic',
-        icon : 'heroicons_outline:home',
-        link : '/ui/employee',
-      },
 
-      {
-        id   : 'dashboards.product',
-        title: 'Product',
-        type : 'basic',
-        icon : 'heroicons_outline:magnifying-glass',
-        link : '/ui/product',
-      },
 ];

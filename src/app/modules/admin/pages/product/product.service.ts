@@ -8,7 +8,7 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ProductService {
-  private baseUrl = '/api/products';
+  private baseUrl = '/api/product';
 
   constructor(private http: HttpClient) { }
 
