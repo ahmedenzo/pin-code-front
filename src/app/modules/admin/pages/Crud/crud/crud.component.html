@@ -1,4 +1,4 @@
-<div class="flex flex-col items-center justify-start min-h-screen p-4 sm:p-10"> 
+<div class="flex flex-col items-center justify-start min-h-screen p-4 sm:p-10">
   <div class="w-full max-w-5xl flex flex-col sm:flex-row">
 
     <!-- Description Section -->
@@ -17,35 +17,77 @@
 
     <!-- Form Section -->
     <div class="flex flex-col items-center justify-center w-full sm:w-1/2 sm:order-1">
-      <form class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden w-full max-w-md">
-        <!-- Card Number Field with Icon -->
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>Numéro de Carte</mat-label>
-          <mat-icon matPrefix>creditcard</mat-icon>
-          <input matInput placeholder="Saisissez votre numéro de carte">
-        </mat-form-field>
-
-        <!-- CIN Field with Icon -->
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>CIN</mat-label>
-          <mat-icon matPrefix>badge</mat-icon>
-          <input matInput placeholder="Saisissez votre CIN">
-        </mat-form-field>
-
-        <!-- Phone Number Field with Icon -->
-        <mat-form-field class="w-full" appearance="fill">
-          <mat-label>Numéro de Téléphone</mat-label>
-          <mat-icon matPrefix>phone</mat-icon>
-          <input matInput placeholder="Saisissez votre numéro de téléphone">
-        </mat-form-field>
-
-        <!-- Send OTP Button -->
-        <div class="flex justify-center mt-4">
-          <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            Envoyer OTP
+      <!-- OTP Verification Form -->
+      <ng-container *ngIf="otpSent; else cardholderForm">
+      <form  [formGroup]="otpFormGroup" class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden w-full max-w-md">
+        <div class="flex justify-end mb-4">
+          <button class="text-gray-500 hover:text-gray-700 focus:outline-none" (click)="cancelOtp()">
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
           </button>
         </div>
+        <div class="flex flex-col items-center">
+          
+          <img src="assets/images/logo/opt.png" class="w-30 h-30 mb-4">
+          <h2>Verify your Code</h2>
+          <p>Please enter the 6 digit code sent to {{ phoneNumber }}</p>
+          <div class="flex space-x-2 mt-4">
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp1" appOtpInput>
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp2" appOtpInput>
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp3" appOtpInput>
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp4" appOtpInput>
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp5" appOtpInput>
+            <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded otp-input" formControlName="otp6" appOtpInput>
+          </div>
+       
+            <button (click)="verifyOtp()" class="mt-4 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">
+              Verify OTP
+            </button>
+       
+        </div>
       </form>
+    </ng-container>
+      <ng-template #cardholderForm>
+        <!-- First Form (Cardholder Form) -->
+        <form [formGroup]="firstFormGroup" class="flex flex-col mt-8 p-8 pb-4 bg-card rounded-2xl shadow overflow-hidden w-full max-w-md">
+          <div class="flex flex-col items-center">
+            <mat-form-field class="w-full" appearance="fill">
+              <mat-label>Numéro de Carte</mat-label>
+              <mat-icon matPrefix>credit_card</mat-icon>
+              <input matInput placeholder="Saisissez votre numéro de carte" formControlName="cardNumber">
+              <mat-error *ngIf="firstFormGroup.get('cardNumber').invalid && (firstFormGroup.get('cardNumber').dirty || firstFormGroup.get('cardNumber').touched)">
+                Numéro de carte invalide. 
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="fill">
+              <mat-label>CIN</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input matInput placeholder="Saisissez votre CIN" formControlName="cin">
+              <mat-error *ngIf="firstFormGroup.get('cin').invalid && (firstFormGroup.get('cin').dirty || firstFormGroup.get('cin').touched)">
+                CIN invalide.
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-full" appearance="fill">
+              <mat-label>Numéro de Téléphone</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput placeholder="Saisissez votre numéro de téléphone" formControlName="phoneNumber" >
+             
+              <mat-error *ngIf="firstFormGroup.get('phoneNumber').invalid && (firstFormGroup.get('phoneNumber').dirty || firstFormGroup.get('phoneNumber').touched)">
+                Numéro de téléphone invalide. 
+              </mat-error>
+            </mat-form-field>
+
+            <div class="flex justify-center mt-4">
+              <button (click)="sendOtp()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                Envoyer OTP
+              </button>
+            </div>
+          </div>
+        </form>
+      </ng-template>
     </div>
   </div>
 </div>
