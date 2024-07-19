@@ -12,12 +12,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgClass, CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { MatSnackBar } from '@angular/material/snack-bar';  
+import { CardNumberFormatDirective } from './card-number-format.directive';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { CrudService } from './crud.service';
-import { OtpInputDirective } from './otp-input.directive'; // Assurez-vous de définir le bon chemin
-import { FuseAlertService } from '@fuse/components/alert/alert.service';
+import { OtpInputDirective } from './otp-input.directive';
 
+import { AlertComponent } from './alert/alert/alert.component';
 
 @Component({
   selector: 'app-crud',
@@ -31,6 +31,7 @@ import { FuseAlertService } from '@fuse/components/alert/alert.service';
     FormsModule,
     MatFormFieldModule,
     NgClass,
+    CardNumberFormatDirective,
     MatInputModule,
     TextFieldModule,
     ReactiveFormsModule,
@@ -42,7 +43,7 @@ import { FuseAlertService } from '@fuse/components/alert/alert.service';
     MatChipsModule,
     MatDatepickerModule,
     OtpInputDirective,
-
+    AlertComponent,
   ],
 })
 export class CrudComponent {
@@ -54,12 +55,12 @@ export class CrudComponent {
   isSuccess = false;
   snackbarMessage = '';
   otpVerified = false;
+  alertType: 'success' | 'warning' | 'error' = 'success';
+  alertMessage = '';
 
   constructor(
     private _formBuilder: FormBuilder,
     private crudService: CrudService,
-    private _snackBar: MatSnackBar,
-    private _fuseAlertService: FuseAlertService
   ) {
     this.firstFormGroup = this._formBuilder.group({
       cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
@@ -81,18 +82,18 @@ export class CrudComponent {
     if (this.firstFormGroup.valid) {
       const { cardNumber, cin, phoneNumber } = this.firstFormGroup.value;
 
-      // Prepend '216' to the phone number
+
       this.phoneNumber = '216' + phoneNumber;
 
       this.crudService.verifyCardholder(cardNumber, cin, this.phoneNumber).subscribe(
         (response) => {
           console.log('Verification successful:', response);
           this.otpSent = true;
-          this.openSnackBar(response.message, 'success');
+          this.showAlert(response.message, 'success');
         },
         (error) => {
           console.error('Verification failed:', error.error.message);
-          this.openSnackBar(error.error.message, 'error');
+          this.showAlert(error.error.message, 'error');
         }
       );
     }
@@ -104,29 +105,47 @@ export class CrudComponent {
       this.crudService.validateOtp(this.phoneNumber, otp).subscribe(
         (response) => {
           console.log('OTP validation successful:', response);
-          this.openSnackBar(response.message, 'success'); // Show success message
+          this.showAlert(response.message, 'success'); // Show success message
           this.otpVerified = true; // Set OTP verification status to true
+          
+          // Wait 3 seconds before resetting forms and showing the cardholder form
+          setTimeout(() => {
+            this.resetOtpForm(); // Reset OTP form fields
+            this.resetCardholderForm(); // Reset cardholder form fields
+            this.otpSent = false; // Show the cardholder form
+            this.otpVerified = false; // Reset OTP verification status
+          }, 5000);
         },
         (error) => {
           console.error('OTP validation failed:', error.error.message);
-          this.openSnackBar(error.error.message, 'error'); // Show error message
+          this.showAlert(error.error.message, 'error'); // Show error message
         }
       );
     } else {
       console.log('Form is invalid');
     }
   }
+  
 
-
-  openSnackBar(message: string, type: 'success' | 'error') {
-    this._snackBar.open(message, 'Close', {
-      duration: 3000,
-      panelClass: [type === 'success' ? 'snackbar-success' : 'snackbar-error']
-    });
+  showAlert(message: string, type: 'success' | 'warning' | 'error') {
+    this.alertMessage = message;
+    this.alertType = type;
+    setTimeout(() => {
+      this.alertMessage = '';
+    }, 5000);
   }
+
   cancelOtp(): void {
     this.otpSent = false; 
     this.otpVerified = false;
+  }
+  resetCardholderForm(): void {
+    // Reset cardholder form fields
+    this.firstFormGroup.reset();
+  }
+  resetOtpForm(): void {
+    // Reset OTP form fields
+    this.otpFormGroup.reset();
   }
   
 }
