@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatChipsModule } from '@angular/material/chips';
@@ -77,7 +77,37 @@ export class CrudComponent {
       otp6: ['', [Validators.required, Validators.maxLength(1)]],
     });
   }
+  cardNumberValidator(control: AbstractControl): { [key: string]: any } | null {
+    const value = control.value ? control.value.replace(/\D/g, '') : '';
+    if (!value) {
+      return { 'required': true };
+    }
+    if (value.length !== 16 || !this.isValidCardNumber(value)) {
+      return { 'pattern': true };
+    }
+    return null;
+  }
 
+  private isValidCardNumber(cardNumber: string): boolean {
+    let sum = 0;
+    let shouldDouble = false;
+
+    for (let i = cardNumber.length - 1; i >= 0; i--) {
+      let digit = parseInt(cardNumber.charAt(i), 10);
+
+      if (shouldDouble) {
+        digit *= 2;
+        if (digit > 9) {
+          digit -= 9;
+        }
+      }
+
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+
+    return (sum % 10 === 0);
+  }
   sendOtp() {
     if (this.firstFormGroup.valid) {
       const { cardNumber, cin, phoneNumber } = this.firstFormGroup.value;
@@ -114,7 +144,7 @@ export class CrudComponent {
             this.resetCardholderForm(); // Reset cardholder form fields
             this.otpSent = false; // Show the cardholder form
             this.otpVerified = false; // Reset OTP verification status
-          }, 5000);
+          }, 2000);
         },
         (error) => {
           console.error('OTP validation failed:', error.error.message);
@@ -134,7 +164,7 @@ export class CrudComponent {
       this.alertMessage = '';
     }, 5000);
   }
-
+ 
   cancelOtp(): void {
     this.otpSent = false; 
     this.otpVerified = false;

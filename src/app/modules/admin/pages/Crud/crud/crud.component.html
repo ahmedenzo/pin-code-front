@@ -67,37 +67,38 @@
                 <mat-label>Card Number</mat-label>
                 <mat-icon matPrefix>credit_card</mat-icon>
                 <input matInput formControlName="cardNumber" placeholder="Enter your 16-digit card number" appCardNumberFormat>
-                <mat-error *ngIf="firstFormGroup.get('cardNumber').hasError('required') && firstFormGroup.get('cardNumber').touched">
+            
+                <mat-error *ngIf="firstFormGroup.controls.cardNumber.hasError('required')">
                   Card Number is required
                 </mat-error>
-                <mat-error *ngIf="firstFormGroup.get('cardNumber').hasError('pattern') && firstFormGroup.get('cardNumber').touched">
-                  Card Number must be exactly 16 digits
+                <mat-error *ngIf="firstFormGroup.controls.cardNumber.hasError('pattern')">
+                  Card Number must be exactly 16 digits and valid
                 </mat-error>
               </mat-form-field>
             </div>
+            
           
-          
-          <div class="form-group">
-            <mat-form-field class="w-full">
-              <mat-label>CIN</mat-label>
-              <mat-icon matPrefix>badge</mat-icon>
-              <input matInput formControlName="cin" placeholder="Enter your 8-digit CIN">
-              <mat-error *ngIf="firstFormGroup.controls.cin.hasError('required')">CIN is required</mat-error>
-              <mat-error *ngIf="firstFormGroup.controls.cin.hasError('pattern')">CIN must be 8 digits</mat-error>
-            </mat-form-field>
-          </div>
-          <div class="form-group">
-            <mat-form-field class="w-full">
-              <mat-label>Phone Number</mat-label>
-              <mat-icon matPrefix>phone</mat-icon>
-              <div class="flex">
-                <span class="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+216</span>
-                <input matInput formControlName="phoneNumber" placeholder="Enter your 8-digit phone number" class="rounded-r-md">
-              </div>
-              <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('required')">Phone Number is required</mat-error>
-              <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('pattern')">Phone Number must be 8 digits</mat-error>
-            </mat-form-field>
-          </div>
+            <div class="form-group">
+              <mat-form-field class="w-full">
+                <mat-label>CIN</mat-label>
+                <mat-icon matPrefix>badge</mat-icon>
+                <input matInput formControlName="cin" placeholder="Enter your 8-digit CIN" maxlength="8">
+                <mat-error *ngIf="firstFormGroup.controls.cin.hasError('required')">CIN is required</mat-error>
+                <mat-error *ngIf="firstFormGroup.controls.cin.hasError('pattern')">CIN must be 8 digits</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="form-group">
+              <mat-form-field class="w-full">
+                <mat-label>Phone Number</mat-label>
+                <mat-icon matPrefix>phone</mat-icon>
+                <div class="flex">
+                  <span class="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+216</span>
+                  <input matInput formControlName="phoneNumber" placeholder="Enter your 8-digit phone number" class="rounded-r-md" maxlength="8">
+                </div>
+                <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('required')">Phone Number is required</mat-error>
+                <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('pattern')">Phone Number must be 8 digits</mat-error>
+              </mat-form-field>
+            </div>
           <div class="flex justify-center mt-4">
             <button mat-raised-button color="primary" class="w-full" type="submit" [disabled]="!firstFormGroup.valid">Send OTP</button>
           </div>
