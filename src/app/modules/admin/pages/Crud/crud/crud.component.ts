@@ -57,7 +57,27 @@ export class CrudComponent {
   otpVerified = false;
   alertType: 'success' | 'warning' | 'error' = 'success';
   alertMessage = '';
+  currentYear: number = new Date().getFullYear() % 100; // Get the last two digits of the current year
 
+  months = [
+    { value: '01', viewValue: '01' },
+    { value: '02', viewValue: '02' },
+    { value: '03', viewValue: '03' },
+    { value: '04', viewValue: '04' },
+    { value: '05', viewValue: '05' },
+    { value: '06', viewValue: '06' },
+    { value: '07', viewValue: '07' },
+    { value: '08', viewValue: '08' },
+    { value: '09', viewValue: '09' },
+    { value: '10', viewValue: '10' },
+    { value: '11', viewValue: '11' },
+    { value: '12', viewValue: '12' },
+  ];
+
+  years = Array.from({ length: 10 }, (_, i) => {
+    const year = (this.currentYear + i).toString().padStart(2, '0');
+    return { value: year, viewValue: `20${year}` };
+  });
   constructor(
     private _formBuilder: FormBuilder,
     private crudService: CrudService,
@@ -66,6 +86,7 @@ export class CrudComponent {
       cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
       cin: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+      cardExpiration: ['', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]],
     });
 
     this.otpFormGroup = this._formBuilder.group({
@@ -108,14 +129,55 @@ export class CrudComponent {
 
     return (sum % 10 === 0);
   }
+  formatExpiration(event: any) {
+    const input = event.target;
+    let value = input.value.replace(/\D/g, ''); // Remove non-digit characters
+  
+    if (value.length > 4) {
+      value = value.slice(0, 4); // Limit to 4 digits
+    }
+  
+    if (value.length <= 2) {
+      input.value = value;
+    } else {
+      input.value = `${value.slice(0, 2)}/${value.slice(2)}`;
+    }
+  
+    // Set the formatted value back to the form control
+    this.firstFormGroup.get('cardExpiration')?.setValue(input.value, { emitEvent: false });
+  
+    // Validate the month and year
+    this.validateExpiration(value);
+  }
+  
+  validateExpiration(value: string) {
+    const month = parseInt(value.slice(0, 2), 10);
+    const year = parseInt(value.slice(2, 4), 10);
+  
+    // Get the current year in two-digit format (e.g., 24 for 2024)
+    const currentYear = new Date().getFullYear() % 100;
+  
+    if (month < 1 || month > 12) {
+      this.firstFormGroup.get('cardExpiration')?.setErrors({ invalidMonth: true });
+    } else if (year < currentYear) {
+      this.firstFormGroup.get('cardExpiration')?.setErrors({ invalidYear: true });
+    } else {
+      this.firstFormGroup.get('cardExpiration')?.setErrors(null);
+    }
+  }
+  
+  
   sendOtp() {
     if (this.firstFormGroup.valid) {
-      const { cardNumber, cin, phoneNumber } = this.firstFormGroup.value;
-
-
+      const { cardNumber, cin, phoneNumber, cardExpiration } = this.firstFormGroup.value;
+  
+      // Format the cardExpiration to MMYY
+      const formattedExpiration = cardExpiration.replace('/', '');
+  
+      // Prepend the country code to the phone number
       this.phoneNumber = '216' + phoneNumber;
-
-      this.crudService.verifyCardholder(cardNumber, cin, this.phoneNumber).subscribe(
+  
+      this.crudService.verifyCardholder(cardNumber, cin, this.phoneNumber, formattedExpiration).subscribe(
         (response) => {
           console.log('Verification successful:', response);
           this.otpSent = true;
@@ -128,6 +190,7 @@ export class CrudComponent {
       );
     }
   }
+  
 
   verifyOtp(): void {
     if (this.otpFormGroup.valid) {

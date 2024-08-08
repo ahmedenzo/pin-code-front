@@ -152,4 +152,20 @@
   .alert span {
     margin-left: 0.5rem;
   }
+  .flex-90 {
+    flex: 0 0 74%;
+  }
   
+  .flex-5 {
+    flex: 0 0 2%;
+  }
+  
+  /* Ensure fields take up full width within their flex containers */
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .mat-form-field input {
+    width: 100%;
+    padding: 0.4rem;
+  }
