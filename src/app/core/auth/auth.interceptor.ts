@@ -1,52 +1,78 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
-import { AuthUtils } from 'app/core/auth/auth.utils';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Router } from '@angular/router';
 
-/**
- * Intercept
- *
- * @param req
- * @param next
- */
-export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> =>
-{
+import { AuthUtils } from './auth.utils';
+import { catchError, Observable, throwError, switchMap } from 'rxjs';
+
+
+export const authInterceptor = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
+    const router = inject(Router);
 
     // Clone the request object
     let newReq = req.clone();
 
-    // Request
-    //
-    // If the access token didn't expire, add the Authorization header.
-    // We won't add the Authorization header if the access token expired.
-    // This will force the server to return a "401 Unauthorized" response
-    // for the protected API routes which our response interceptor will
-    // catch and delete the access token from the local storage while logging
-    // the user out from the app.
-    if ( authService.accessToken && !AuthUtils.isTokenExpired(authService.accessToken) )
-    {
+    // Add Authorization header if access token is valid
+    const accessToken = authService.accessToken;
+    if (accessToken) {
         newReq = req.clone({
-            headers: req.headers.set('Authorization', 'Bearer ' + authService.accessToken),
+            headers: req.headers.set('Authorization', 'Bearer ' + accessToken),
         });
     }
 
-    // Response
+    // Handle the response
     return next(newReq).pipe(
-        catchError((error) =>
-        {
-            // Catch "401 Unauthorized" responses
-            if ( error instanceof HttpErrorResponse && error.status === 401 )
-            {
-                // Sign out
-                authService.signOut();
-
-                // Reload the app
-                location.reload();
+        catchError((error) => {
+            // Check if it's a "401 Unauthorized" response
+            if (error instanceof HttpErrorResponse && error.status === 401) {
+                // First check if the refresh token is also expired
+                const refreshToken = authService.refreshToken;
+                if (!refreshToken || AuthUtils.isTokenExpired(refreshToken)) {
+                    // If refresh token is expired, trigger sign-out
+                    authService.signOut().pipe(
+                        catchError((err) => {
+                            console.error('Error during sign-out: ', err);
+                            return throwError(err);
+                        })
+                    ).subscribe(() => {
+                        // Handle navigation after sign-out
+                        if (router.url === '/auth/sign-in') {
+                            // Show alert if already on the sign-in page
+                            authService.triggerAlert('Session expired. Please sign in again.');
+                        } else {
+                            // Navigate to the sign-in page
+                            router.navigate(['/auth/sign-in']);
+                        }
+                    });
+                } else {
+                    // If refresh token is still valid, attempt to refresh the access token
+                    return authService.refreshAccessToken().pipe(
+                        catchError((refreshError) => {
+                            // If refreshing the access token fails, sign out
+                            console.error('Error refreshing access token:', refreshError);
+                            return authService.signOut().pipe(
+                                catchError((err) => {
+                                    console.error('Error during sign-out after refresh failure: ', err);
+                                    return throwError(err);
+                                })
+                            );
+                        }),
+                        // Retry the original request with the new token
+                        switchMap(() => {
+                            const newAccessToken = authService.accessToken;
+                            const clonedRequest = req.clone({
+                                headers: req.headers.set('Authorization', 'Bearer ' + newAccessToken)
+                            });
+                            return next(clonedRequest);
+                        })
+                    );
+                }
             }
 
+            // Re-throw the error so other parts of the app can handle it
             return throwError(error);
-        }),
+        })
     );
 };

@@ -23,7 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl  : './compact.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [FuseLoadingBarComponent, MatButtonModule, MatIconModule, LanguagesComponent, FuseFullscreenComponent, SearchComponent, ShortcutsComponent, MessagesComponent, NotificationsComponent, UserComponent, NgIf, RouterOutlet, FuseVerticalNavigationComponent],
+    imports      : [FuseLoadingBarComponent, MatButtonModule, MatIconModule, LanguagesComponent, FuseFullscreenComponent, SearchComponent, ShortcutsComponent, MessagesComponent, NotificationsComponent, UserComponent, NgIf, RouterOutlet, QuickChatComponent, FuseVerticalNavigationComponent],
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy
 {

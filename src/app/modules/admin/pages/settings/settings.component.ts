@@ -52,8 +52,8 @@ export class SettingsComponent implements OnInit, OnDestroy
             {
                 id         : 'account',
                 icon       : 'heroicons_outline:user-circle',
-                title      : 'Account',
-                description: 'Manage your public profile and private information',
+                title      : 'Admin And Bank',
+                description: 'Manage Bank and Admin Owner',
             },
             {
                 id         : 'security',

@@ -26,3 +26,4 @@ export const AuthGuard: CanActivateFn | CanActivateChildFn = (route, state) =>
         }),
     );
 };
+

@@ -1,6 +1,6 @@
 /* Variables */
 :root {
-    --fuse-vertical-navigation-thin-width: 110px;
+    --fuse-vertical-navigation-thin-width: 80px;
 }
 
 fuse-vertical-navigation {
@@ -62,8 +62,8 @@ fuse-vertical-navigation {
 
                         .fuse-vertical-navigation-item {
                             justify-content: center;
-                            padding: 7px;
-                            border-radius: 2px;
+                            padding: 12px;
+                            border-radius: 4px;
 
                             .fuse-vertical-navigation-item-icon {
                                 margin: 0;

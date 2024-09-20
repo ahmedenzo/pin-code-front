@@ -87,7 +87,6 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-          
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "configurations": {
                         "production": {
@@ -129,6 +128,6 @@
         }
     },
     "cli": {
-      "analytics": "d2da0901-6e16-449c-ab35-f774eecf3d1e"
+      "analytics": false
     }
 }

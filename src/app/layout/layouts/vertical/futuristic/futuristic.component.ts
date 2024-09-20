@@ -25,7 +25,7 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl  : './futuristic.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [FuseLoadingBarComponent, FuseVerticalNavigationComponent, UserComponent, MatButtonModule, MatIconModule, LanguagesComponent, FuseFullscreenComponent, SearchComponent, ShortcutsComponent, MessagesComponent, NotificationsComponent, NgIf, RouterOutlet],
+    imports      : [FuseLoadingBarComponent, FuseVerticalNavigationComponent, UserComponent, MatButtonModule, MatIconModule, LanguagesComponent, FuseFullscreenComponent, SearchComponent, ShortcutsComponent, MessagesComponent, NotificationsComponent, NgIf, RouterOutlet, QuickChatComponent],
 })
 export class FuturisticLayoutComponent implements OnInit, OnDestroy
 {

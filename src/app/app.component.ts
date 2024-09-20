@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+// src/app/app.component.ts
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { InactivityServiceService } from './core/auth/inactivity-service.service'; 
 
 @Component({
     selector   : 'app-root',
@@ -10,10 +12,13 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent
 {
+    private inactivityService = inject(InactivityServiceService); // Inject InactivityServiceService
+
     /**
      * Constructor
      */
     constructor()
     {
+        // Initializing the inactivity service will start monitoring user inactivity
     }
 }

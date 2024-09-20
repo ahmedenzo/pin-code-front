@@ -9,48 +9,28 @@ export class UserService
     private _httpClient = inject(HttpClient);
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Setter & getter for user
-     *
-     * @param value
-     */
-    set user(value: User)
-    {
-        // Store the value
-        this._user.next(value);
-    }
-
-    get user$(): Observable<User>
-    {
+    get user$(): Observable<User> {
         return this._user.asObservable();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Get the current signed-in user data
-     */
-    get(): Observable<User>
-    {
-        return this._httpClient.get<User>('api/common/user').pipe(
-            tap((user) =>
-            {
-                this._user.next(user);
-            }),
-        );
+    // Getter & Setter for user
+    set user(value: User) {
+  
+        console.log('UserService: Setting user:', value);
+        this._user.next(value);
     }
 
     /**
-     * Update the user
-     *
-     * @param user
+     * Set the user directly from sign-in response.
+     * No need to make any additional API call.
      */
+    setUserFromSignIn(user: User): void {
+        console.log('UserService: setUserFromSignIn called with:', user);
+        this._user.next(user);
+    }
+  
+    
+    
     update(user: User): Observable<any>
     {
         return this._httpClient.patch<User>('api/common/user', {user}).pipe(

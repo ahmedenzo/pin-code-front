@@ -24,7 +24,7 @@
             <user></user>
             <div class="flex flex-col w-full ml-4 overflow-hidden">
                 <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden leading-normal text-current opacity-80">
-                    {{user.name}}
+                   <!-- {{user.name}} -->
                 </div>
                 <div class="w-full mt-0.5 whitespace-nowrap text-sm text-ellipsis overflow-hidden leading-normal text-current opacity-50">
                     brian.hughes&#64;company.com
@@ -54,7 +54,12 @@
             <shortcuts></shortcuts>
             <messages></messages>
             <notifications></notifications>
-
+            <button
+                class="lg:hidden"
+                mat-icon-button
+                (click)="quickChat.toggle()">
+                <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
+            </button>
         </div>
     </div>
 
@@ -73,4 +78,4 @@
 </div>
 
 <!-- Quick chat -->
-
+<quick-chat #quickChat="quickChat"></quick-chat>
