@@ -3,14 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { BehaviorSubject, catchError, Observable, of, switchMap, throwError,tap,map } from 'rxjs';
-
+import { environment } from '../../../../environment.prod';
 @Injectable({providedIn: 'root'})
 export class AuthService
 {
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
-    private apiUrl = 'http://localhost:8080';
+    private apiUrl = environment.apiUrl;
     private _alertSubject = new BehaviorSubject<string | null>(null);
     
     public alert$ = this._alertSubject.asObservable(); 

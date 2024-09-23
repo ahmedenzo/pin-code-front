@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 })
 export class InactivityServiceService {
 
-  private inactivityTime: number = 60 * 60 * 1000; 
+  private inactivityTime: number = 10 * 60 * 1000; 
     private inactivityTimer: any;
 
     constructor(private router: Router, private ngZone: NgZone,private AuthService :AuthService , private _router: Router,) {
