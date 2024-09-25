@@ -1,0 +1,12 @@
+.modern-button {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px; /* Adjust padding for modern feel */
+    border-radius: 4px; /* Rounded corners */
+    transition: background-color 0.3s, transform 0.2s; /* Smooth transition */
+}
+
+.modern-button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Light hover effect */
+    transform: scale(1.05); /* Slight scaling on hover */
+}

@@ -37,7 +37,9 @@ export class AuthService
     get refreshToken(): string {
         return localStorage.getItem('refreshToken') ?? '';
     }
-
+    getUserIdFromSession(): string | null {
+        return sessionStorage.getItem('userId'); // Retrieve user ID from sessionStorage
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -91,8 +93,8 @@ export class AuthService
 
                 // Store user details in the user service (if needed)
                 this._userService.user = response;
-                console.log('Stored user details in UserService:', response);
-                window.location.reload(); 
+          
+              //  window.location.reload(); 
 
                 return of(response);
             }),
@@ -244,10 +246,7 @@ export class AuthService
             'Authorization': `Bearer ${accessToken}` // Add access token in Authorization header
         });
     
-        // Log headers for debugging
-   
-    
-        // Backend API call for sign-out
+
         return this._httpClient
             .post(this.apiUrl + '/api/auth/signout', {}, { headers }) // Ensure the API URL is correct
             .pipe(
@@ -256,9 +255,11 @@ export class AuthService
                     // Remove tokens from local storage after successful sign-out
                     localStorage.removeItem('accessToken');
                     localStorage.removeItem('refreshToken');
+                    sessionStorage.removeItem('userId');
+
+                    // Optionally, clear user data from UserService if needed
+                 
                     console.log('Tokens removed and user signed out');
-    
-                    // Set the authenticated flag to false
                     this._authenticated = false;
                 }),
                 catchError((error) => {
