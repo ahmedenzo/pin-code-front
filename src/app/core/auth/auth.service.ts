@@ -37,10 +37,7 @@ export class AuthService
     get refreshToken(): string {
         return localStorage.getItem('refreshToken') ?? '';
     }
-    getUserIdFromSession(): string | null {
-        return sessionStorage.getItem('userId'); // Retrieve user ID from sessionStorage
-    }
-
+ 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -141,11 +138,10 @@ export class AuthService
                     catchError((error) => {
                         console.error('Failed to refresh access token:', error);
     
-                        // Handle the case when the refresh token is invalid
+                   
                         if (error.includes('Refresh token is not valid')) {
                             console.warn('User needs to log in again.');
-                            // Perform any necessary cleanup or redirect here
-                            this.signOut(); // Example action to log out
+                            this.signOut(); 
                         }
     
                         return of(false);
@@ -157,7 +153,7 @@ export class AuthService
             }
         }
     
-        // Access token is valid and not expired
+   
         console.log('Access token is valid.');
         return of(true);
     }

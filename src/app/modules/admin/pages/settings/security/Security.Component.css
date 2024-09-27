@@ -1,0 +1,15 @@
+.copy-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    transition: color 0.3s ease;
+}
+
+.copy-button:hover {
+    color: #3b82f6; /* Change color on hover */
+}
+
+.icon-size-4 {
+    font-size: 20px; /* Adjust the size of the icon */
+}

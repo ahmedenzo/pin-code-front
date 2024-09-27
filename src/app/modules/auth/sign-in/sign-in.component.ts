@@ -81,7 +81,7 @@ export class AuthSignInComponent implements OnInit {
                         type: 'error',
                         message: 'Another session is already opened for this user. Please signout from the other session first.',
                     };
-                } else if (error.error?.statusCode === 500 && error.error?.message === 'Error: Internal server error') {
+                } else if (error.error?.statusCode === 401 && error.error?.message === 'Error: Invalid username or password') {
                     // Specific error message for wrong credentials
                     this.alert = {
                         type: 'error',

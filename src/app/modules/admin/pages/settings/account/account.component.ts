@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, inject, ViewChild, ElementRef } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
@@ -12,7 +12,6 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BankServiceService } from 'app/core/services/bank-service.service'; 
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
-import { UserService } from 'app/core/user/user.service';
 @Component({
     selector       : 'settings-account',
     templateUrl    : './account.component.html',
@@ -38,20 +37,32 @@ import { UserService } from 'app/core/user/user.service';
 })
 export class SettingsAccountComponent implements OnInit {
     private _fuseAlertService = inject(FuseAlertService);
-    private _userService = inject (UserService)
-    
     private _bankService = inject(BankServiceService);  
+
+@ViewChild('accountFormRef') accountFormRef!: ElementRef;
+
+
+
     accountForm: UntypedFormGroup;
     adminForm: UntypedFormGroup;
+    AssoAdminForm: UntypedFormGroup;
     logoPreview: string | ArrayBuffer | null = null;
-    userid : string
+
     logoFile: File | null = null; // Store the logo file
     errorMessage: string | null = null; //
     successMessage: string | null = null;
+    errorMessageu: string | null = null; //
+    successMessageu: string | null = null;
+    errorMessagea: string | null = null; //
+    successMessagea: string | null = null;
     successMessageadmin: string | null = null;
     errorMessageadmin: string | null = null;
     showPassword: boolean = false; // Add this line
+    isEditMode: boolean = false; // Flag to check if we are in edit mode
+    selectedBankId: any; // To keep track of which bank is being edited
+    selectedBank:any;
     banks: any[] = [];   
+    admins : any [] =[]
   
 
     constructor(
@@ -70,7 +81,7 @@ export class SettingsAccountComponent implements OnInit {
             binAcquereurMcd: ['', Validators.required],
             ctb: ['', Validators.required],
             banqueEtrangere: ['', Validators.required],
-            logo: [null] // Add a form control for the logo
+            logo: [null] 
         });
 
         this.adminForm = this._formBuilder.group({
@@ -78,55 +89,137 @@ export class SettingsAccountComponent implements OnInit {
             password: ['', Validators.required],
             email: ['', Validators.required],
             phoneNumber: ['', Validators.required],
-            bankId: ['', Validators.required],
+          
         });
 
-
-
-       // this.loadUserId();
-        
+        this.AssoAdminForm = this._formBuilder.group({
+            AdminId: ['', Validators.required],
+            bankId: ['', Validators.required],
+            
+        });
         this.loadBanks()
+        this.getadmins()
     }
 
+    onEdit(bank: any) {
+        this.accountForm.patchValue({
+            name: bank.name,
+            codeBanque: bank.codeBanque,
+            libelleBanque: bank.libelleBanque,
+            enseigneBanque: bank.enseigneBanque,
+            ica: bank.ica,
+            binAcquereurVisa: bank.binAcquereurVisa,
+            binAcquereurMcd: bank.binAcquereurMcd,
+            ctb: bank.ctb,
+            banqueEtrangere: bank.banqueEtrangere,
+        });
 
-   /* private loadUserId(): void {
-        const user = this._userService.getUser();
-        this.userid = user?.id || '';
-        console.log('User ID:', this.userid);
-        sessionStorage.setItem('userId', this.userid); 
-    }*/
-
-    togglePasswordVisibility(): void {
-        this.showPassword = !this.showPassword; // Toggle password visibility
+  
+        this.selectedBankId = bank.id; 
+        this.selectedBank=bank.logo
+        this.isEditMode = true; 
+        this.logoPreview = `data:image/png;base64,${this.selectedBank}`; 
+        this.scrollToForm();
+        console.log('logo',this.logoPreview)
     }
-    displayedColumns: string[] = ['name', 'bank_code','libelleBanque', 'actions'];
     onFileSelected(event: Event): void {
         const file = (event.target as HTMLInputElement).files[0];
-
+    
         if (file) {
             const reader = new FileReader();
             reader.onload = () => {
-                this.logoPreview = reader.result;
-                this.logoFile = file; 
+                this.logoPreview = reader.result; 
+                this.logoFile = file;  
                 this.cdr.markForCheck();
             };
             reader.readAsDataURL(file);
-            this.accountForm.patchValue({ logo: file }); 
+            this.accountForm.patchValue({ logo: file });
         }
     }
+ 
+onUpdate(): void {
+    if (this.accountForm.valid) {
+        const formData = new FormData();
+        const bankRequest = { ...this.accountForm.value };
+        delete bankRequest.logo; // Exclude the logo from the request body
+
+        // Append the bank request data to the form data
+        formData.append('bankRequest', JSON.stringify(bankRequest));
+
+        // Check if a new logo file is selected
+        if (this.logoFile) {
+            // New logo is selected, append it to the form data
+            formData.append('logo', this.logoFile); 
+        } else if (this.selectedBank) {
+            // No new logo selected, append the existing logo base64 string as a blob
+            const existingLogoBlob = this.base64ToBlob(this.selectedBank, 'image/png');
+            formData.append('logo', existingLogoBlob, 'existing-logo.png'); // Append existing logo as a file
+        }
+
+        if (this.selectedBankId) {
+            this._bankService.updateBank(this.selectedBankId, formData).subscribe({
+                next: (response) => {
+                    this.successMessageu = 'Bank updated successfully!';
+                    this.errorMessageu = null;  
+                    this.accountForm.reset();  
+                    this.logoPreview = null;  
+  
+                    this.logoFile = null;     
+                    this.isEditMode = false; 
+                    this.selectedBankId = null; 
+                    this.cdr.markForCheck();
+       
+                    this.loadBanks()
+                    this.getadmins()
+
+                    setTimeout(() => {
+                        this.successMessageu = null;
+                    }, 4000);
+                },
+                error: (error) => {
+                    this.errorMessageu = 'Failed to update bank'; 
+                    this.successMessageu = null;  
+                    this.cdr.markForCheck();
+                    setTimeout(() => {
+                        this.errorMessageu = null;
+                    }, 4000);
+                }
+            });
+        } else {
+            this.errorMessage = 'No bank selected for update';
+        }
+    } else {
+        this.errorMessage = 'Form is invalid';
+    }
+}
+
+
+    base64ToBlob(base64: string, type: string): Blob {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Uint8Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        return new Blob([byteNumbers], { type });
+    }
+
+
+    togglePasswordVisibility(): void {
+        this.showPassword = !this.showPassword; 
+    }
+    displayedColumns: string[] = ['logo','name', 'bank_code','BankAdmin' ,'actions'];
     
     loadBanks(): void {
   
         this._bankService.getAllBanks().subscribe({
             next: (response) => {
-                console.log('Fetched banks data:', response); // Log the data to see its structure
+                console.log('Fetched banks data:', response); 
                 if (response && response.banks && Array.isArray(response.banks)) {
-                    this.banks = response.banks; // Set the banks array if it exists in the response
+                    this.banks = response.banks; 
                     console.log('Banks data:', this.banks);
                 } else {
                
-                }
-         
+                }       
             },
             error: (error) => {
                 console.error('Error fetching banks:', error);
@@ -135,31 +228,53 @@ export class SettingsAccountComponent implements OnInit {
             }
         });
     }
+    scrollToForm() {
+        this.accountFormRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    getadmins(): void {
+        this._bankService.GetAdmins().subscribe({
+            next: (response) => {
+                console.log('Fetched Admins data:', response);
+            
+                if (Array.isArray(response) && response.length > 0) {
+                    this.admins = response; 
+                    console.log('Admins data:', this.admins);
+                    this.cdr.detectChanges(); 
+                } else {
+                   
+                    console.warn('No valid admins data found. Response structure:', response);
+                }
+            },
+            error: (error) => {
+                console.error('Error fetching admins:', error);
+            }
+        });
+    }
+    
     
 
     onSave(): void {
-        if (this.accountForm.valid) {
-          
-            this.accountForm.patchValue({
-                logo: this.logoFile  
-            });
-
-            const formData = this.accountForm.value;
+        if (this.accountForm.valid && this.logoFile) {
+            const formData = new FormData();
+            const bankRequest = { ...this.accountForm.value };
+            delete bankRequest.logo;
+            formData.append('bankRequest', JSON.stringify(bankRequest));
+            formData.append('logo', this.logoFile);
     
-            console.log('Bank data being submitted with logo:', formData);
-    
-            // Call the service to save the bank
+            console.log('FormData object being submitted:', formData);
             this._bankService.createBank(formData).subscribe({
                 next: (response) => {
                     console.log('Bank created successfully:', response);
                     this.successMessage = 'Bank created successfully!';
-                    this.errorMessage = null;  // Clear error message on success
-                    this.accountForm.reset();  // Optionally reset the form after success
-                    this.logoPreview = null;  // Clear the logo preview
-                    this.logoFile = null;     // Clear the logo file reference
+                    this.errorMessage = null;  
+                    this.accountForm.reset();  
+                    this.logoPreview = null;  
+                    this.logoFile = null;     
                     this.cdr.markForCheck();
+                    this.loadBanks()
+                    this.getadmins()
+
     
-                    // Show the success message for 4 seconds, then hide it
                     setTimeout(() => {
                         this.successMessage = null;
                         this.cdr.markForCheck();
@@ -168,83 +283,118 @@ export class SettingsAccountComponent implements OnInit {
                 error: (error) => {
                     console.error('Failed to create bank:', error);
     
-                    // Set the error message for the fuse-alert
-                    this.errorMessage = 'Failed to create bank '; 
+                    this.errorMessage = 'Failed to create bank'; 
                     this.successMessage = null;  
                     this.cdr.markForCheck();
                     setTimeout(() => {
                         this.errorMessage = null;
                         this.cdr.markForCheck();
                     }, 4000);
-                    // Log to the console for debugging
-                    console.log('Displayed error message:', this.errorMessage);
+                }
+            });
+        } else {
+            console.error('Form is invalid or logo file is missing');
+            this.errorMessage = 'Form is invalid or logo file is missing';
+        }
+    }
+    
+    associateAdmin(): void {
+        if (this.AssoAdminForm.valid) {
+            const adminId = this.AssoAdminForm.get('AdminId')?.value;
+            const bankId = this.AssoAdminForm.get('bankId')?.value;
+
+            this._bankService.associateAdminToBank(adminId, bankId).subscribe({
+                next: (response) => {
+                    console.log('Admin associated to bank successfully:', response);
+                    this.successMessagea = 'Admin associated to bank successfully!';
+                    this.errorMessagea = null;  
+                    this.AssoAdminForm.reset();  
+                    this.cdr.markForCheck();
+                    this.loadBanks()
+                    this.getadmins()
+
+                    setTimeout(() => {
+                        this.successMessagea = null;
+                        this.cdr.markForCheck();
+                    }, 4000);
+                },
+                error: (error) => {
+                    console.error('Failed to associate admin to bank:', error);
+                    this.errorMessagea = 'Failed to associate admin to bank'; 
+                    this.successMessagea = null;  
+                    this.cdr.markForCheck();
+                    setTimeout(() => {
+                        this.errorMessage = null;
+                        this.cdr.markForCheck();
+                    }, 4000);
                 }
             });
         }
     }
 
-
-    onSaveadmin(): void {
+    refreshPage(): void {
+        window.location.reload();
+    }
+    
+    registerAdmin(): void {
         if (this.adminForm.valid) {
-            const bankId = this.adminForm.get('bankId').value; // Get the bankId from the form
-            const adminId = this.userid; // Use the user ID from the user service
+           
+            const user = this.adminForm.value;
     
-            console.log('Admin ID:', adminId, 'Bank ID:', bankId);
+          
+            user.role = ['admin']; 
     
-            // Call the service to associate the admin with the bank
-            this._bankService.associateAdminToBank(adminId, bankId).subscribe({
+            this._bankService.registerAdmin(user).subscribe({
                 next: (response) => {
-                 
-                    console.log('Admin associated with bank successfully:', response);
-                    this.successMessageadmin = 'Admin associated with bank successfully!';
-                    this.errorMessageadmin = null;  // Clear error message on success
-                    this.adminForm.reset();  // Reset the form after success
+                    console.log('Admin registered successfully:', response);
+                    this.successMessageadmin = 'Admin registered successfully!';
+                    this.errorMessageadmin = null;  
+                    this.adminForm.reset();  
                     this.cdr.markForCheck();
+                    this.loadBanks()
+                    this.getadmins()
     
-                    // Show success message for 4 seconds
                     setTimeout(() => {
                         this.successMessageadmin = null;
                         this.cdr.markForCheck();
                     }, 4000);
                 },
                 error: (error) => {
-                    console.error('Failed to associate admin with bank:', error);
-    
-                    // Set the error message for the fuse-alert
-                    this.errorMessageadmin = 'Failed to associate admin with bank'; 
+                    console.error('Failed to register admin:', error);
+                    this.errorMessageadmin = 'Failed to register admin'; 
                     this.successMessageadmin = null;  
                     this.cdr.markForCheck();
                     setTimeout(() => {
                         this.errorMessageadmin = null;
                         this.cdr.markForCheck();
                     }, 4000);
-                    // Log to the console for debugging
-                    console.log('Displayed error message:', this.errorMessageadmin);
                 }
             });
         }
     }
-    
-    
     
     onCancel(): void {
         this.accountForm.reset(); 
         this.logoPreview = null; 
         this.logoFile = null; 
         this.cdr.markForCheck(); 
+        this.isEditMode = false; 
     }
     onCanceladmin(): void {
         this.adminForm.reset(); 
         this.cdr.markForCheck(); 
     }
-    
+    onCancelass(): void {
+        this.AssoAdminForm.reset(); 
+        this.cdr.markForCheck(); 
+    }
     showAlert(): void {
-        this._fuseAlertService.show('myAlertName'); // Shows the alert
+        this._fuseAlertService.show('myAlertName'); 
     }
 
     dismissAlert(): void {
-        this._fuseAlertService.dismiss('myAlertName'); // Dismisses the alert
+        this._fuseAlertService.dismiss('myAlertName'); 
     }
 
-    // Other methods like onEdit, onDelete...
+  
 }

@@ -13,17 +13,28 @@
             <span fuseAlertTitle>Warn alert</span>
             {{ errorMessage }}
         </fuse-alert>
+
+        <fuse-alert *ngIf="successMessageu" [type]="'success'" [appearance]="'outline'">
+            <span fuseAlertTitle>Success</span>
+            {{ successMessageu }}
+        </fuse-alert>
+    
+
+        <fuse-alert *ngIf="errorMessageu" [type]="'warn'" [appearance]="'outline'">
+            <span fuseAlertTitle>Warn alert</span>
+            {{ errorMessageu }}
+        </fuse-alert>
     </div>
     
     
 
-    <form [formGroup]="accountForm">
+    <form #accountFormRef [formGroup]="accountForm">
         <!-- Section -->
         <div class="w-full">
             <div class="text-xl">Banks</div>
             <div class="text-secondary">Create Bank with Required Information</div>
         </div>
-        <div class="grid sm:grid-cols-4 gap-6 w-full mt-10">
+        <div class="grid sm:grid-cols-4 gap-6 w-full mt-3">
 
             <div class="sm:col-span-1">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
@@ -131,19 +142,25 @@
                     class="hidden" />
                 <label 
                     for="logo-upload" 
-                    class="flex items-center justify-center h-24 w-24 border-2 border-dashed border-gray-300 rounded-full cursor-pointer hover:border-gray-400 overflow-hidden transition duration-200 ease-in-out">
-                    <div class="flex flex-col items-center justify-center">
-                        <img 
-                            *ngIf="logoPreview" 
-                            [src]="logoPreview" 
-                            alt="Logo Preview" 
-                            class="h-full w-full object-cover" />
-                        <span class="text-gray-500 mt-1 text-center">
-                            {{ logoPreview ? 'Change Logo' : 'Upload Logo' }}
-                        </span>
+                    class="flex items-center justify-center h-16 w-16 border-2 border-dashed border-gray-300 rounded-full cursor-pointer hover:border-gray-400 overflow-hidden transition duration-200 ease-in-out">
+                    <div class="flex items-center justify-center h-full w-full">
+                        <ng-container *ngIf="logoPreview; else noLogo">
+                            <img 
+                                [src]="logoPreview" 
+                                alt="Logo Preview" 
+                                class="h-full w-full object-cover rounded-full" />
+                        </ng-container>
+                        <ng-template #noLogo>
+                            <span class="text-gray-500 text-center">Upload Logo</span>
+                        </ng-template>
                     </div>
                 </label>
             </div>
+            
+            
+            
+            
+            
             
             
             
@@ -165,9 +182,10 @@
         type="button"
         [color]="'primary'" 
         [disabled]="accountForm.invalid"
-        (click)="onSave()">
-        Save
-         </button>
+        (click)="isEditMode ? onUpdate() : onSave()">
+        {{ isEditMode ? 'Update Bank' : 'Create Bank' }}
+    </button>
+    
       </div>
       
 
@@ -181,20 +199,20 @@
       
             <fuse-alert *ngIf="successMessageadmin" [type]="'success'" [appearance]="'outline'">
                 <span fuseAlertTitle>Success</span>
-                {{ successMessage }}
+                {{ successMessageadmin }}
             </fuse-alert>
         
     
             <fuse-alert *ngIf="errorMessageadmin" [type]="'warn'" [appearance]="'outline'">
-                <span fuseAlertTitle>Warn alert</span>
-                {{ errorMessage }}
+                <span fuseAlertTitle>warn</span>
+                {{ errorMessageadmin }}
             </fuse-alert>
         </div>
         <div class="w-full">
             <div class="text-xl">Admin Banks</div>
             <div class="text-secondary">Create Admin </div>
         </div>
-        <div class="grid md:grid-cols-2 gap-6 w-full mt-10">
+        <div class="grid md:grid-cols-5 gap-6 w-full mt-3">
 
             <div class="sm:col-span-1">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
@@ -247,17 +265,7 @@
                 </mat-form-field>
             </div>
             
-            <div class="sm:col-span-1">
-                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Bank</mat-label>
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:map-pin'" matPrefix></mat-icon>
-                    <mat-select [formControlName]="'bankId'">
-                        <mat-option *ngFor="let bank of banks" [value]="bank.id">
-                            {{ bank.name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+
             
             
         </div>
@@ -275,7 +283,8 @@
         type="button"
         [color]="'primary'" 
         [disabled]="adminForm.invalid"
-        (click)="onSaveadmin()">
+        (click)="registerAdmin()">
+        
         Save
          </button>
       </div>
@@ -283,83 +292,158 @@
 
     </form>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="my-2 border-t"></div>
-      <div>
-        <div>
-        <mat-accordion class="max-w-4xl mt-8">
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        List of Banks
-                    </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div>
-                    <mat-table  [dataSource]="banks" class="mat-elevation-z8">
 
-                        <!-- Name Column -->
-                        <ng-container matColumnDef="name">
-                            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
-                            <mat-cell *matCellDef="let item"> {{item.name}} </mat-cell>
-                        </ng-container>
-    
-                        <!-- Bank Code Column -->
-                        <ng-container matColumnDef="bank_code">
-                            <mat-header-cell *matHeaderCellDef> Bank Code </mat-header-cell>
-                            <mat-cell *matCellDef="let item"> {{item.codeBanque}} </mat-cell>
-                        </ng-container>
 
-                        <ng-container matColumnDef="libelleBanque">
-                            <mat-header-cell *matHeaderCellDef>libelleBanque </mat-header-cell>
-                            <mat-cell *matCellDef="let item"> {{item.libelleBanque}} </mat-cell>
-                        </ng-container>
+
+
+ <form [formGroup]="AssoAdminForm">
+
+
+    <div class="w-full max-w-3xl">
+  
+        <fuse-alert *ngIf="successMessagea" [type]="'success'" [appearance]="'outline'">
+            <span fuseAlertTitle>success</span>
+            {{ successMessagea }}
+        </fuse-alert>
     
-                        <!-- Logo Column 
-                        <ng-container matColumnDef="logo">
-                            <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
-                            <mat-cell *matCellDef="let item">
-                                <img *ngIf="item.logo" [src]="item.logo" alt="{{ item.name }} logo" width="50" height="50" />
-                            </mat-cell>
-                        </ng-container>-->
-    
-                        <!-- Actions Column -->
-                        <ng-container matColumnDef="actions">
-                            <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
-                            <mat-cell *matCellDef="let item">
-                                <div class="flex justify-end space-x-0.5"> 
-                                    <button mat-button color="primary" class="modern-button" (click)="onEdit(item)">
-                                        <mat-icon>edit</mat-icon> 
-                                    </button>
-                                    <button mat-button color="warn" class="modern-button" (click)="onDelete(item)">
-                                        <mat-icon>delete</mat-icon> 
-                                    </button>
-                                </div>
-                            </mat-cell>
-                        </ng-container>
-                        
-    
-                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-                    </mat-table>
-                </div>
-            </mat-expansion-panel>
-         </mat-accordion>
-         </div>
-     
+
+        <fuse-alert *ngIf="errorMessagea" [type]="'warn'" [appearance]="'outline'">
+            <span fuseAlertTitle>Warn alert</span>
+            {{ errorMessagea }}
+        </fuse-alert>
+    </div>
+    <div class="w-full">
+        <div class="text-xl">AssociateAdminToBank</div>
+    </div>
+    <div class="grid md:grid-cols-5 gap-6 w-full mt-3">
+
+        <div class="sm:col-span-2">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Admin</mat-label>
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:user'" matPrefix></mat-icon>
+                <mat-select [formControlName]="'AdminId'">
+                    <mat-option *ngFor="let admin of admins" [value]="admin.id">
+                        {{ admin.username }} 
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
         
- </div>
+        <div class="sm:col-span-2">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Bank</mat-label>
+                <mat-icon svgIcon="heroicons_outline:building-library"></mat-icon>
+                <mat-select [formControlName]="'bankId'">
+                    <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                        {{ bank.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        
+        
+
+        
+        
+    </div>
+    <div class="flex items-center justify-end">
+ 
+
+        <button
+            mat-stroked-button
+            type="button"
+            class="ml-4"
+            (click)="onCancelass()">
+            Cancel
+        </button>
+        <button
+            class="ml-4"
+            mat-flat-button
+            type="button"
+            [color]="'primary'" 
+            [disabled]="AssoAdminForm.invalid"
+            (click)="associateAdmin()">
+            Save
+        </button>
+
+    </div>
+    
+
+</form>
+<div class="my-2 border-t"></div>
+<div>
+      
+    <mat-accordion class="max-w-4xl mt-3">
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    List of Banks
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div>
+                <mat-table  [dataSource]="banks" class="mat-elevation-z8">
+
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="BankAdmin">
+                        <mat-header-cell *matHeaderCellDef> Username-AdminBank </mat-header-cell>
+                        <mat-cell *matCellDef="let item"> {{item.adminUsername}} </mat-cell>
+                    </ng-container>
+
+                    <ng-container matColumnDef="name">
+                        <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                        <mat-cell *matCellDef="let item"> {{item.name}} </mat-cell>
+                    </ng-container>
+
+                    <!-- Bank Code Column -->
+                    <ng-container matColumnDef="bank_code">
+                        <mat-header-cell *matHeaderCellDef> Bank Code </mat-header-cell>
+                        <mat-cell *matCellDef="let item"> {{item.codeBanque}} </mat-cell>
+                    </ng-container>
+
+            
+
+    
+                    <ng-container matColumnDef="logo">
+                        <mat-header-cell *matHeaderCellDef> Logo </mat-header-cell>
+                        <mat-cell *matCellDef="let item">
+                       
+                            <img *ngIf="item.logo" [src]="'data:image/png;base64,' + item.logo" alt="{{ item.name }} logo" class="logo-img" />
+                          
+
+                        </mat-cell>
+                    </ng-container>
+                    
+
+                    <ng-container matColumnDef="actions">
+                        <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                        <mat-cell *matCellDef="let item">
+                            <div class="actions-container"> 
+                                <button mat-icon-button color="primary" class="modern-button" (click)="onEdit(item)">
+                                    <mat-icon>edit</mat-icon> 
+                                </button>
+                 
+                            </div>
+                        </mat-cell>
+                    </ng-container>
+                    
+                    
+
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+                </mat-table>
+            </div>
+        </mat-expansion-panel>
+     </mat-accordion>
+     
+ 
+    
+</div>
+
+
+
+
+
 
         <!--<div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
             Name 
@@ -523,7 +607,8 @@
                 type="button"
                 [color]="'primary'">Save
             </button>
-        </div> -->
-    
+        </div> 
+    -->
 
 
+  

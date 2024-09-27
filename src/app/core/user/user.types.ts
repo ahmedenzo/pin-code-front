@@ -7,5 +7,6 @@ export interface User {
     role?: string;            
     adminId?: string;            // Optional, references the admin
     bankId?: string;             // Optional, references the bank
-    agencyId?: string;           // Optional, references the agency
+    agencyId?: string;     
+          // Optional, references the agency
 }

@@ -2,7 +2,8 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { inject, Injectable } from '@angular/core';
 import { Observable, catchError, of, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environment.prod';
-import { TabBank } from '../Model/Bank.model';
+
+
 
 @Injectable({ providedIn: 'root' })
 export class BankServiceService {
@@ -14,44 +15,44 @@ export class BankServiceService {
 
 
     
-
-    createBank(TabBank: any): Observable<any> {
-        const url = `${this.apiUrl}/api/bankagency/Addbanks`; 
+    createBank(formData: FormData): Observable<any> {
+        const url = `${this.apiUrl}/api/bank/Addbanks`;
+        const accessToken = localStorage.getItem('accessToken');
+    
         const headers = new HttpHeaders({
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+            'Authorization': `Bearer ${accessToken}`
         });
-        const options = { headers: headers };
-      
-        return this._httpClient.post<any>(`${url}`, TabBank, options)
-          .pipe(
-            catchError(this.handleError)
-          );
-      }
-      private handleError(error: HttpErrorResponse): Observable<never> {
-        // Log the error message for debugging
-        console.error('An error occurred:', error);
-    
-        // Check if the error response has a message and status code
-        if (error.error instanceof ErrorEvent) {
-            // A client-side or network error occurred.
-            console.error('Client-side error:', error.error.message);
-        } else {
-            // A backend error occurred.
-            console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error.message}`);
-        }
-    
-        // Return a user-friendly error message
-        const errorMessage = error.error?.message || 'An unexpected error occurred. Please try again later.';
-        // Return an observable with a user-facing error message
-        return throwError(errorMessage);
+        return this._httpClient.post<any>(url, formData, { headers })
+            .pipe(
+                catchError(this.handleError)
+            );
     }
+    
+    
+    updateBank(id: number,formData: FormData): Observable<any> {
+        const url = `${this.apiUrl}/api/bank/update`;
+        const accessToken = localStorage.getItem('accessToken');
+    
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`
+        });
+    
+        // Post request with FormData (let the browser handle Content-Type)
+        return this._httpClient.put<any>(`${url}/${id}`, formData, { headers })
+            .pipe(
+                catchError(this.handleError)
+            );
+    }
+    
 
+ 
 
     getAllBanks(): Observable<any> {
-        const url = `${this.apiUrl}/api/bankagency/banks/list`; 
+        const url = `${this.apiUrl}/api/bank/banks/list`; 
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
         });
+       
         return this._httpClient.get<any>(url, { headers })
           .pipe(
             catchError(this.handleError)
@@ -83,4 +84,37 @@ registerAdmin(user: any): Observable<any> {
 
     return this._httpClient.post(url, user, { headers });
 }
+
+GetAdmins (): Observable<any>{
+
+    const url = `${this.apiUrl}/api/auth/users`; 
+    const headers = new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}` 
+    });
+    return this._httpClient.get<any>(url, { headers })
+    .pipe(
+      catchError(this.handleError)
+    );
+}
+
+
+private handleError(error: HttpErrorResponse): Observable<never> {
+    // Log the error message for debugging
+    console.error('An error occurred:', error);
+
+    // Check if the error response has a message and status code
+    if (error.error instanceof ErrorEvent) {
+        // A client-side or network error occurred.
+        console.error('Client-side error:', error.error.message);
+    } else {
+        // A backend error occurred.
+        console.error(`Backend returned code ${error.status}, ` + `body was: ${error.error.message}`);
+    }
+
+    // Return a user-friendly error message
+    const errorMessage = error.error?.message || 'An unexpected error occurred. Please try again later.';
+    // Return an observable with a user-facing error message
+    return throwError(errorMessage);
+}
+
 }

@@ -2,110 +2,188 @@
 
     <!-- Form -->
     <form [formGroup]="securityForm">
+   
+        <div class="w-full max-w-3xl">
+      
+            <fuse-alert *ngIf="successMessage" [type]="'success'" [appearance]="'outline'">
+                <span fuseAlertTitle>Success</span>
+                {{ successMessage }}
+            </fuse-alert>
+        
+    
+            <fuse-alert *ngIf="errorMessage" [type]="'warn'" [appearance]="'outline'">
+                <span fuseAlertTitle>Warn alert</span>
+                {{ errorMessage }}
+            </fuse-alert>
+    
 
-        <!-- Section -->
+        </div>
+
         <div class="w-full">
             <div class="text-xl">Change your password</div>
-            <div class="text-secondary">You can only change your password twice within 24 hours!</div>
+            <div class="text-secondary">You can only change your password or Generate New Password</div>
         </div>
-        <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
-            <!-- Current password -->
+        <div class="grid sm:grid-cols-5 gap-6 w-full mt-3">
+
             <div class="sm:col-span-4">
-                <mat-form-field
-                    class="w-full"
-                    [subscriptSizing]="'dynamic'">
+                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                     <mat-label>Current password</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:key'"
-                        matPrefix></mat-icon>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'currentPassword'"
-                        type="password"
+                        [formControlName]="'currentPasswordsuper'"
+                        [type]="showCurrentPassword ? 'text' : 'password'" 
                         matInput>
+                    <button mat-icon-button matSuffix (click)="showCurrentPassword = !showCurrentPassword" type="button">
+                        <mat-icon>{{ showCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon> <!-- Toggle icon -->
+                    </button>
                 </mat-form-field>
             </div>
-            <!-- New password -->
+        
             <div class="sm:col-span-4">
-                <mat-form-field
-                    class="w-full"
-                    [subscriptSizing]="'dynamic'">
+                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                     <mat-label>New password</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:key'"
-                        matPrefix></mat-icon>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'newPassword'"
-                        type="password"
+                        [formControlName]="'newPasswordsuper'"
+                        [type]="showNewPassword ? 'text' : 'password'"  
                         matInput>
+                    <button mat-icon-button matSuffix (click)="showNewPassword = !showNewPassword" type="button">
+                        <mat-icon>{{ showNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon> 
+                    </button>
                 </mat-form-field>
-                <div class="mt-1 text-md text-hint">Minimum 8 characters. Must include numbers, letters and special characters.</div>
-            </div>
-        </div>
-
-        <!-- Divider -->
-        <div class="my-10 border-t"></div>
-
-        <!-- Section -->
-        <div class="w-full">
-            <div class="text-xl">Security preferences</div>
-            <div class="text-secondary">Keep your account more secure with following preferences.</div>
-        </div>
-        <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
-            <!-- 2-step auth -->
-            <div class="sm:col-span-4 flex items-center justify-between">
-                <div
-                    class="flex-auto cursor-pointer"
-                    (click)="twoStepToggle.toggle()">
-                    <div class="leading-6 font-medium">Enable 2-step authentication</div>
-                    <div class="text-md text-secondary">
-                        Protects you against password theft by requesting an authentication code via SMS on every login.
-                    </div>
+                <div class="mt-1 text-md text-hint">Minimum 8 characters. Must include numbers, letters, and special characters.</div>
+        
+                <div *ngIf="securityForm.get('newPasswordsuper')?.errors?.passwordComplexity" class="mt-2 text-red-600">
+                    Password must be at least 8 characters long and include a mix of upper and lower case letters, numbers, and special characters.
                 </div>
-                <mat-slide-toggle
-                    class="ml-4"
-                    [color]="'primary'"
-                    [formControlName]="'twoStep'"
-                    #twoStepToggle>
-                </mat-slide-toggle>
             </div>
-            <!-- Ask to change password -->
-            <div class="sm:col-span-4 flex items-center justify-between">
-                <div
-                    class="flex-auto cursor-pointer"
-                    (click)="askPasswordChangeToggle.toggle()">
-                    <div class="leading-6 font-medium">Ask to change password on every 6 months</div>
-                    <div class="text-md text-secondary">
-                        A simple but an effective way to be protected against data leaks and password theft.
+            
+            <div class="flex items-center justify-end">
+                <button
+                    mat-stroked-button
+                    type="button">
+                    Cancel
+                </button>
+                <button
+                    class="ml-4"
+                    mat-flat-button
+                    type="button"
+                    (click)="onChangePasswordSuperAdmin()"
+                    [color]="'primary'"
+                    [disabled]="!securityForm.valid || securityForm.get('newPasswordsuper')?.hasError('passwordComplexity')"> <!-- Disable if form is invalid or password is invalid -->
+                    Save
+                </button>
+            </div>
+            
+        </div>
+
+
+
+
+        <div class="w-full mt-8">
+            <div class="text-xl">Generate Random Password</div>
+            <div class="text-secondary">You can generate a random password if you forget your current password (SuperAdmin)</div>
+        </div>
+        <div class="grid sm:grid-cols-5 gap-6 w-full mt-3">
+            <!-- Display Generated Password -->
+            <div class="sm:col-span-4">
+                <div class="w-full border border-gray-300 rounded p-4 flex justify-between items-center bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center">
+                        <mat-icon
+                            class="icon-size-5 mr-2"
+                            [svgIcon]="'heroicons_solid:key'"
+                            matPrefix></mat-icon>
+                        <span class="text-gray-800">{{ generatedPasswordsuper || 'No password generated yet' }}</span>
                     </div>
+                    <button
+                        class="copy-button"
+                        (click)="copyToClipboard(generatedPasswordsuper)">
+                        <mat-icon
+                            class="icon-size-4"
+                            [svgIcon]="'heroicons_solid:clipboard'"
+                            matPrefix></mat-icon>
+                    </button>
                 </div>
-                <mat-slide-toggle
-                    class="ml-4"
-                    [color]="'primary'"
-                    [formControlName]="'askPasswordChange'"
-                    #askPasswordChangeToggle>
-                </mat-slide-toggle>
             </div>
-        </div>
+            
+            <div class="flex items-center justify-end">
+                <button
+                    class="ml-8"
+                    mat-flat-button
+                    type="button"
+                    (click)="onGenerateRandomPassword()"
+                    [color]="'primary'">
+                    Generate
+                </button>
+            </div>
+            <div *ngIf="successMessagech" class="mt-2 text-green-600">{{ successMessagech }}</div>
+            <div *ngIf="errorMessagech" class="mt-2 text-red-600">{{ errorMessagech }}</div>
 
-        <!-- Divider -->
+
+
+        </div>
+        
+
+
+
+
+
+
+
+       
         <div class="my-10 border-t"></div>
-
-        <!-- Actions -->
-        <div class="flex items-center justify-end">
-            <button
-                mat-stroked-button
-                type="button">
-                Cancel
-            </button>
-            <button
-                class="ml-4"
-                mat-flat-button
-                type="button"
-                [color]="'primary'">Save
-            </button>
+        <div class="w-full mt-8">
+            <div class="text-xl">Generate Random Password For Admins</div>
+            <div class="text-secondary">You can Generate Random Password For Admins IF they Forget their Current Password</div>
         </div>
+        <div class="grid sm:grid-cols-3 gap-6 w-full mt-3">
+            <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                <mat-label>Admin</mat-label>
+                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:user'" matPrefix></mat-icon>
+                <mat-select [formControlName]="'AdminId'">
+                    <mat-option *ngFor="let admin of admins" [value]="admin.id">
+                        {{ admin.username }} 
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="grid sm:grid-cols-5 gap-6 w-full mt-3">
+            <div class="sm:col-span-4">
+                <div class="w-full border border-gray-300 rounded p-4 flex justify-between items-center bg-white shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center">
+                        <mat-icon
+                            class="icon-size-5 mr-2"
+                            [svgIcon]="'heroicons_solid:key'"
+                            matPrefix></mat-icon>
+                        <span class="text-gray-800">{{ generatedPassword || 'No password generated yet' }}</span>
+                    </div>
+                    <button
+                    class="copy-button"
+                    (click)="copyToClipboardadmin(generatedPassword)">
+                    <mat-icon
+                        class="icon-size-4"
+                        [svgIcon]="'heroicons_solid:clipboard'"
+                        matPrefix></mat-icon>
+                </button>
+                </div>
+            </div>
+        
+            <div class="flex items-center justify-end">
+                <button
+                    class="ml-8"
+                    mat-flat-button
+                    type="button"
+                    (click)="onGenerateRandomPasswordadmin()"
+                    [color]="'primary'"
+                    [disabled]=" !securityForm.get('AdminId')?.value"> 
+                    Generate
+                </button>
+                
+            </div>
+            <div *ngIf="successMessageadmi" class="mt-2 text-green-600">{{ successMessageadmi}}</div>
+            <div *ngIf="errorMessageadmi" class="mt-2 text-red-600">{{ errorMessageadmi }}</div>
+        
+        </div> 
     </form>
 
 </div>
