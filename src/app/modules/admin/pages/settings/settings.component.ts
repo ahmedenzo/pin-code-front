@@ -64,8 +64,8 @@ export class SettingsComponent implements OnInit, OnDestroy
             {
                 id         : 'plan-billing',
                 icon       : 'heroicons_outline:credit-card',
-                title      : 'Plan & Billing',
-                description: 'Manage your subscription plan, payment method and billing information',
+                title      : 'Bins',
+                description: 'Manage Bins ',
             },
             {
                 id         : 'notifications',

@@ -1,173 +1,211 @@
 <div class="w-full max-w-3xl">
 
     <!-- Form -->
-    <form [formGroup]="planBillingForm">
+    <form [formGroup]="accountForm">
 
-        <!-- Section -->
+
         <div class="w-full">
-            <div class="text-xl">Change your plan</div>
-            <div class="text-secondary">Upgrade or downgrade your current plan.</div>
-        </div>
-        <div class="grid sm:grid-cols-3 gap-6 w-full mt-8">
-            <!-- Plan -->
-            <div class="sm:col-span-3">
-                <fuse-alert
-                    [appearance]="'outline'"
-                    [type]="'info'">
-                    Changing the plan will take effect immediately. You will be charged for the rest of the current month.
-                </fuse-alert>
-            </div>
-            <mat-radio-group
-                class="invisible absolute w-0 h-0 pointer-events-none"
-                [formControlName]="'plan'"
-                #planRadioGroup="matRadioGroup">
-                <ng-container *ngFor="let plan of plans; trackBy: trackByFn">
-                    <mat-radio-button [value]="plan.value"></mat-radio-button>
-                </ng-container>
-            </mat-radio-group>
-            <ng-container *ngFor="let plan of plans; trackBy: trackByFn">
-                <div
-                    class="relative flex flex-col items-start justify-start p-6 rounded-md shadow cursor-pointer bg-card"
-                    [ngClass]="{'ring ring-inset ring-primary': planRadioGroup.value === plan.value}"
-                    (click)="planRadioGroup.value = plan.value">
-                    <ng-container *ngIf="planRadioGroup.value === plan.value">
-                        <mat-icon
-                            class="absolute top-0 right-0 mt-3 mr-3 icon-size-7 text-primary"
-                            [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
-                    </ng-container>
-                    <div class="font-semibold">{{plan.label}}</div>
-                    <div class="mt-1 whitespace-normal text-secondary">{{plan.details}}</div>
-                    <div class="flex-auto"></div>
-                    <div class="mt-8 text-lg">
-                        <span>{{plan.price | currency:'USD':'symbol':'1.0'}}</span>
-                        <span class="text-secondary"> / month</span>
-                    </div>
-                </div>
-            </ng-container>
+            <div class="text-xl">Create Bins</div>
+            <div class="text-secondary">Create Bins Card For Each Bank</div>
         </div>
 
-        <!-- Divider -->
-        <div class="mt-12 mb-10 border-t"></div>
 
-        <!-- Section -->
-        <div class="w-full">
-            <div class="text-xl">Payment Details</div>
-            <div class="text-secondary">Update your billing information. Make sure to set your location correctly as it could affect your tax rates.</div>
-        </div>
-        <div class="grid grid-cols-4 gap-6 w-full mt-8">
-            <!-- Card holder -->
-            <div class="col-span-4">
+
+        <div class="grid sm:grid-cols-4 gap-6 w-full mt-3">
+            <!-- Email -->
+            <div class="sm:col-span-2">
                 <mat-form-field
                     class="w-full"
                     [subscriptSizing]="'dynamic'">
-                    <mat-label>Card holder</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:user'"
-                        matPrefix></mat-icon>
+                    <mat-label>bin</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:credit-card'" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'cardHolder'"
+                        [formControlName]="'bin'"
                         matInput>
+                        <mat-error *ngIf="accountForm.get('bin').hasError('required') && accountForm.get('bin').touched">
+                            bin is required
+                        </mat-error>
                 </mat-form-field>
             </div>
-            <!-- Card number -->
-            <div class="col-span-4 sm:col-span-2">
+
+            <div class="sm:col-span-2">
                 <mat-form-field
                     class="w-full"
                     [subscriptSizing]="'dynamic'">
-                    <mat-label>Card number</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:credit-card'"
-                        matPrefix></mat-icon>
+                    <mat-label>systemCode</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:cog'" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'cardNumber'"
+                        [formControlName]="'systemCode'"
                         matInput>
+                        <mat-error *ngIf="accountForm.get('systemCode').hasError('required') && accountForm.get('systemCode').touched">
+                            systemCode is required
+                        </mat-error>
                 </mat-form-field>
             </div>
-            <!-- Card expiration -->
-            <div class="col-span-2 sm:col-span-1">
+
+
+     
+            <div class="sm:col-span-2">
                 <mat-form-field
                     class="w-full"
                     [subscriptSizing]="'dynamic'">
-                    <mat-label>Expiration date</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:calendar'"
-                        matPrefix></mat-icon>
+                    <mat-label>cardType</mat-label>
+                    <mat-icon class="icon-size-5"  svgIcon="feather:credit-card" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'cardExpiration'"
-                        [placeholder]="'MM / YY'"
+                        [formControlName]="'cardType'"
                         matInput>
+                        <mat-error *ngIf="accountForm.get('cardType').hasError('required') && accountForm.get('cardType').touched">
+                            cardType is required
+                        </mat-error>
                 </mat-form-field>
             </div>
-            <!-- Card CVC -->
-            <div class="col-span-2 sm:col-span-1">
+
+
+            <div class="sm:col-span-2">
                 <mat-form-field
                     class="w-full"
                     [subscriptSizing]="'dynamic'">
-                    <mat-label>CVC / CVC2</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:lock-closed'"
-                        matPrefix></mat-icon>
+                    <mat-label>serviceCode</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shield-check'" matPrefix></mat-icon>
                     <input
-                        [formControlName]="'cardCVC'"
+                        [formControlName]="'serviceCode'"
                         matInput>
+                        <mat-error *ngIf="accountForm.get('serviceCode').hasError('required') && accountForm.get('serviceCode').touched">
+                            serviceCode is required
+                        </mat-error>
                 </mat-form-field>
             </div>
-            <!-- Country -->
-            <div class="col-span-4 sm:col-span-2">
-                <mat-form-field
-                    class="w-full"
-                    [subscriptSizing]="'dynamic'">
-                    <mat-label>Country</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:map-pin'"
-                        matPrefix></mat-icon>
-                    <mat-select [formControlName]="'country'">
-                        <mat-option [value]="'usa'">United States</mat-option>
-                        <mat-option [value]="'canada'">Canada</mat-option>
-                        <mat-option [value]="'mexico'">Mexico</mat-option>
-                        <mat-option [value]="'france'">France</mat-option>
-                        <mat-option [value]="'germany'">Germany</mat-option>
-                        <mat-option [value]="'italy'">Italy</mat-option>
+
+
+            <div class="sm:col-span-2">
+                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                    <mat-label>Bank</mat-label>
+                    <mat-icon svgIcon="heroicons_outline:building-library"></mat-icon>
+                    <mat-select [formControlName]="'bankCode'">
+                        <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                            {{ bank.name }}
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
-            <!-- ZIP -->
-            <div class="col-span-4 sm:col-span-2">
-                <mat-form-field
-                    class="w-full"
-                    [subscriptSizing]="'dynamic'">
-                    <mat-label>ZIP / Postal code</mat-label>
-                    <mat-icon
-                        class="icon-size-5"
-                        [svgIcon]="'heroicons_solid:hashtag'"
-                        matPrefix></mat-icon>
-                    <input matInput>
-                </mat-form-field>
-            </div>
+            
         </div>
-
-        <!-- Divider -->
-        <div class="mt-11 mb-10 border-t"></div>
-
-        <!-- Actions -->
         <div class="flex items-center justify-end">
             <button
                 mat-stroked-button
-                type="button">
+                type="button"
+                (click)="onCancel()">
                 Cancel
             </button>
             <button
                 class="ml-4"
                 mat-flat-button
                 type="button"
+                [disabled]="accountForm.invalid"
+                (click)="createBin()"
                 [color]="'primary'">Save
             </button>
         </div>
-    </form>
+        <!-- Divider -->
+        <div class="mt-11 mb-10 border-t"></div>
 
+    </form>
 </div>
+<div class="w-full p-4 flex items-center">
+    <!-- Search Input Field with Bottom Spacing -->
+    <mat-form-field
+        class="fuse-mat-dense fuse-mat-rounded min-w-64"  
+        [subscriptSizing]="'dynamic'"
+        style="margin-bottom: 20px; width: 300px; margin-right: 20px;"> <!-- Added margin-right for spacing -->
+        <mat-icon
+            class="icon-size-5"
+            matPrefix
+            [svgIcon]="'heroicons_solid:magnifying-glass'"></mat-icon>
+        <input
+            matInput
+            (keyup)="applyFilter($event)"
+            [autocomplete]="'off'"
+            [placeholder]="'Search'">
+    </mat-form-field>
+
+    <!-- Bank Code Select Dropdown with Bottom Spacing -->
+    <mat-form-field
+        class="fuse-mat-dense fuse-mat-rounded min-w-64 search-field"
+        [subscriptSizing]="'dynamic'"
+        style="margin-bottom: 20px; width: 300px;"> <!-- No need for margin-right on this element -->
+        <mat-select placeholder="Select Bank Code" (selectionChange)="filterByBankCode($event.value)">
+            <!-- Option to reset the filter and show all data -->
+            <mat-option [value]="'all'">All</mat-option>
+            <mat-option *ngFor="let bank of uniqueBankCodes" [value]="bank">
+                {{ bank }}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+</div>
+
+
+  
+<div class="mat-elevation-z8 rounded-lg overflow-hidden">
+    <!-- Global Search Field -->
+
+    <div class="mat-elevation-z8 rounded-lg overflow-hidden table-container">
+        <!-- Table -->
+        <table mat-table [dataSource]="dataSource" matSort class="mat-table-custom">
+
+            <!-- Columns -->
+            <ng-container matColumnDef="bin">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">BIN</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.bin}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="systemCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">System Code</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.systemCode}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="cardType">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">Card Type</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.cardType}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="serviceCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">Service Code</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.serviceCode}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="bankCode">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">Bank Code</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.bankCode}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="bankName">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">Bank Name</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.bankName}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef> Actions </mat-header-cell>
+                <mat-cell *matCellDef="let item">
+                    <div class="actions-container" style="display: flex; align-items: center; gap: 8px;"> 
+                        <button mat-icon-button color="primary" (click)="onEdit(item)">
+                            <mat-icon>edit</mat-icon> 
+                        </button>
+                        <button mat-icon-button color="warn" (click)="onDelete(item)">
+                            <mat-icon>delete</mat-icon> 
+                        </button>
+                    </div>
+                </mat-cell>
+            </ng-container>
+            
+            <!-- Header and Row -->
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+        </table>
+
+        <!-- Paginator -->
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+</div>
+
+
+
