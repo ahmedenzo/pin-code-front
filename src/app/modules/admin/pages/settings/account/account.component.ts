@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, inject, ViewChild, ElementRef } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -12,6 +12,22 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BankServiceService } from 'app/core/services/bank-service.service'; 
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+
+
+export function passwordComplexityValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const password = control.value;
+
+        // Regular expression for password validation
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        // Validate the password
+        const valid = passwordPattern.test(password);
+        return valid ? null : { passwordComplexity: true };
+    };
+}
+
+
 @Component({
     selector       : 'settings-account',
     templateUrl    : './account.component.html',
@@ -86,8 +102,8 @@ export class SettingsAccountComponent implements OnInit {
 
         this.adminForm = this._formBuilder.group({
             username: ['', Validators.required],
-            password: ['', Validators.required],
-            email: ['', Validators.required],
+            password: ['',passwordComplexityValidator()],
+            email: ['', Validators.email],
             phoneNumber: ['', Validators.required],
           
         });

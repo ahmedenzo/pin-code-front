@@ -125,7 +125,7 @@ export class SettingsPlanBillingComponent implements OnInit, AfterViewInit
             systemCode: bin.systemCode,
             cardType: bin.cardType,
             serviceCode: bin.serviceCode,
-            bankCode: bin.bankCode // Ensure this is the bank ID
+            bankId: bin.bankCode // Ensure this is the bank ID
         });
     
         this.selectedBinId = bin.id; 
