@@ -1,7 +1,29 @@
 <div class="w-full max-w-3xl">
+    <div class="w-full max-w-3xl"></div>
+    <div>
+        <fuse-alert *ngIf="successMessage" [type]="'success'" [appearance]="'outline'">
+            <span fuseAlertTitle>Success</span>
+            {{ successMessage }}
+        </fuse-alert>
+    
+        <fuse-alert *ngIf="errorMessage" [type]="'warn'" [appearance]="'outline'">
+            <span fuseAlertTitle>Warn alert</span>
+            {{ errorMessage }}
+        </fuse-alert>
 
+        <fuse-alert *ngIf="successMessageupdate" [type]="'info'" [appearance]="'outline'">
+            <span fuseAlertTitle>Info alert</span>
+            {{ successMessageupdate }}
+        </fuse-alert>
+    
+        <fuse-alert *ngIf="successMessagedelete" [type]="'warning'" [appearance]="'outline'">
+            <span fuseAlertTitle>Warning alert</span>
+            {{ successMessagedelete }}
+        </fuse-alert>
+  
+    </div>
     <!-- Form -->
-    <form [formGroup]="accountForm">
+    <form #accountFormRef [formGroup]="accountForm">
 
 
         <div class="w-full">
@@ -76,18 +98,41 @@
                 </mat-form-field>
             </div>
 
-
             <div class="sm:col-span-2">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                     <mat-label>Bank</mat-label>
                     <mat-icon svgIcon="heroicons_outline:building-library"></mat-icon>
-                    <mat-select [formControlName]="'bankCode'">
-                        <mat-option *ngFor="let bank of banks" [value]="bank.id">
-                            {{ bank.name }}
-                        </mat-option>
-                    </mat-select>
+                    
+                    <!-- If in editing mode, show the input, otherwise show select box -->
+                    <ng-container *ngIf="isEditing; else selectBank">
+                        <input 
+                            matInput 
+                            [value]="getBankName(selectedBin)" 
+                            disabled 
+                        />
+                    </ng-container>
+                    
+                    <ng-template #selectBank>
+                        <mat-select [formControlName]="'bankId'">
+                            <mat-option *ngFor="let bank of banks" [value]="bank.id">
+                                {{ bank.name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="accountForm.get('bankId').hasError('required') && accountForm.get('bankId').touched">
+                            Bank is required
+                        </mat-error>
+                    </ng-template>
                 </mat-form-field>
+            
+           
             </div>
+            
+            
+            
+  
+            
+            
+            
             
         </div>
         <div class="flex items-center justify-end">
@@ -101,12 +146,13 @@
                 class="ml-4"
                 mat-flat-button
                 type="button"
+                [color]="'primary'"
                 [disabled]="accountForm.invalid"
-                (click)="createBin()"
-                [color]="'primary'">Save
+                (click)="isEditMode ? updateBin() : createBin()">
+                {{ isEditMode ? 'Update Bin' : 'Create Bin' }}
             </button>
         </div>
-        <!-- Divider -->
+        
         <div class="mt-11 mb-10 border-t"></div>
 
     </form>
@@ -174,8 +220,8 @@
             </ng-container>
 
             <ng-container matColumnDef="bankCode">
-                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">Bank Code</mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.bankCode}} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header">bankName</mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.bankName}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="bankName">
@@ -190,12 +236,13 @@
                         <button mat-icon-button color="primary" (click)="onEdit(item)">
                             <mat-icon>edit</mat-icon> 
                         </button>
-                        <button mat-icon-button color="warn" (click)="onDelete(item)">
+                        <button mat-icon-button color="warn"  (click)="onDelete(item.id, item.bin)"> 
                             <mat-icon>delete</mat-icon> 
                         </button>
                     </div>
                 </mat-cell>
             </ng-container>
+            
             
             <!-- Header and Row -->
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -138,17 +138,17 @@ export class SettingsAccountComponent implements OnInit {
     }
  
 onUpdate(): void {
+  ;
     if (this.accountForm.valid) {
         const formData = new FormData();
         const bankRequest = { ...this.accountForm.value };
-        delete bankRequest.logo; // Exclude the logo from the request body
+        delete bankRequest.logo;
 
-        // Append the bank request data to the form data
         formData.append('bankRequest', JSON.stringify(bankRequest));
 
-        // Check if a new logo file is selected
+
         if (this.logoFile) {
-            // New logo is selected, append it to the form data
+    
             formData.append('logo', this.logoFile); 
         } else if (this.selectedBank) {
             // No new logo selected, append the existing logo base64 string as a blob
@@ -210,24 +210,19 @@ onUpdate(): void {
     displayedColumns: string[] = ['logo','name', 'bank_code','BankAdmin' ,'actions'];
     
     loadBanks(): void {
-  
         this._bankService.getAllBanks().subscribe({
             next: (response) => {
-                console.log('Fetched banks data:', response); 
                 if (response && response.banks && Array.isArray(response.banks)) {
-                    this.banks = response.banks; 
-                    console.log('Banks data:', this.banks);
-                } else {
-               
-                }       
+                    this.banks = [...response.banks];  
+                    this.cdr.detectChanges();  
+                }
             },
             error: (error) => {
                 console.error('Error fetching banks:', error);
-
-           
             }
         });
     }
+    
     scrollToForm() {
         this.accountFormRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
       }
@@ -254,26 +249,27 @@ onUpdate(): void {
     
 
     onSave(): void {
+      
+    
         if (this.accountForm.valid && this.logoFile) {
             const formData = new FormData();
             const bankRequest = { ...this.accountForm.value };
             delete bankRequest.logo;
+    
             formData.append('bankRequest', JSON.stringify(bankRequest));
             formData.append('logo', this.logoFile);
     
-            console.log('FormData object being submitted:', formData);
             this._bankService.createBank(formData).subscribe({
                 next: (response) => {
                     console.log('Bank created successfully:', response);
                     this.successMessage = 'Bank created successfully!';
-                    this.errorMessage = null;  
-                    this.accountForm.reset();  
-                    this.logoPreview = null;  
-                    this.logoFile = null;     
+                    this.errorMessage = null;
+                    this.accountForm.reset();
+                    this.logoPreview = null;
+                    this.logoFile = null;
+                    this.loadBanks();
+                    this.getadmins();
                     this.cdr.markForCheck();
-                    this.loadBanks()
-                    this.getadmins()
-
     
                     setTimeout(() => {
                         this.successMessage = null;
@@ -282,9 +278,8 @@ onUpdate(): void {
                 },
                 error: (error) => {
                     console.error('Failed to create bank:', error);
-    
-                    this.errorMessage = 'Failed to create bank'; 
-                    this.successMessage = null;  
+                    this.errorMessage = 'Failed to create bank';
+                    this.successMessage = null;
                     this.cdr.markForCheck();
                     setTimeout(() => {
                         this.errorMessage = null;
@@ -295,6 +290,10 @@ onUpdate(): void {
         } else {
             console.error('Form is invalid or logo file is missing');
             this.errorMessage = 'Form is invalid or logo file is missing';
+            setTimeout(() => {
+                this.errorMessage = null;
+                this.cdr.markForCheck();
+            }, 4000);
         }
     }
     

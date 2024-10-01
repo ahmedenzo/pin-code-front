@@ -85,20 +85,16 @@ export class SettingsTeamComponent implements OnInit
         // Setup the roles
         this.roles = [
             {
-                label      : 'Read',
-                value      : 'read',
-                description: 'Can read and clone this repository. Can also open and comment on issues and pull requests.',
+                label      : 'Looked',
+                value      : 'Looked',
+                description: 'Active Session.',
             },
             {
-                label      : 'Write',
-                value      : 'write',
-                description: 'Can read, clone, and push to this repository. Can also manage issues and pull requests.',
+                label      : 'Unlooked',
+                value      : 'Unlooked',
+                description: 'Unlook Session.',
             },
-            {
-                label      : 'Admin',
-                value      : 'admin',
-                description: 'Can read, clone, and push to this repository. Can also manage issues, pull requests, and repository settings, including adding collaborators.',
-            },
+       
         ];
     }
 

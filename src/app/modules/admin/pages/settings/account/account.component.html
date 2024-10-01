@@ -180,11 +180,12 @@
         class="ml-4"
         mat-flat-button
         type="button"
-        [color]="'primary'" 
-        [disabled]="accountForm.invalid"
+        [color]="'primary'"
+        [disabled]="accountForm.invalid || (!logoFile && !isEditMode)"
         (click)="isEditMode ? onUpdate() : onSave()">
         {{ isEditMode ? 'Update Bank' : 'Create Bank' }}
     </button>
+    
     
       </div>
       
@@ -398,7 +399,7 @@
                     <!-- Bank Code Column -->
                     <ng-container matColumnDef="bank_code">
                         <mat-header-cell *matHeaderCellDef> Bank Code </mat-header-cell>
-                        <mat-cell *matCellDef="let item"> {{item.codeBanque}} </mat-cell>
+                        <mat-cell *matCellDef="let item"> {{item.bankCode}} </mat-cell>
                     </ng-container>
 
             
