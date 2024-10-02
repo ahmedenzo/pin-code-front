@@ -4,7 +4,7 @@ import { Agency } from "./Agency.model";
 export interface TabBank {
   id?: number;
   name?: string;
-  codeBanque?: string;
+  bankCode?: string;
   libelleBanque?: string;
   enseigneBanque?: string;
   ica?: string;

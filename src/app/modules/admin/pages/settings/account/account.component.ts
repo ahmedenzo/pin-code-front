@@ -11,6 +11,7 @@ import { FuseAlertComponent, FuseAlertService } from '@fuse/components/alert';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BankServiceService } from 'app/core/services/bank-service.service'; 
 import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTableModule } from '@angular/material/table';
 
 
@@ -40,6 +41,7 @@ export function passwordComplexityValidator(): ValidatorFn {
         ReactiveFormsModule,
         MatFormFieldModule,
         MatIconModule,
+        MatTooltipModule,
         MatInputModule,
         MatSelectModule,
         MatOptionModule,
@@ -89,7 +91,7 @@ export class SettingsAccountComponent implements OnInit {
     ngOnInit(): void {
         this.accountForm = this._formBuilder.group({
             name: ['', Validators.required],
-            codeBanque: ['', Validators.required],
+            bankCode: ['', Validators.required],
             libelleBanque: ['', Validators.required],
             enseigneBanque: ['', Validators.required],
             ica: ['', Validators.required],
@@ -120,7 +122,7 @@ export class SettingsAccountComponent implements OnInit {
     onEdit(bank: any) {
         this.accountForm.patchValue({
             name: bank.name,
-            codeBanque: bank.codeBanque,
+            bankCode: bank.bankCode,
             libelleBanque: bank.libelleBanque,
             enseigneBanque: bank.enseigneBanque,
             ica: bank.ica,
@@ -293,7 +295,7 @@ onUpdate(): void {
                     }, 4000);
                 },
                 error: (error) => {
-                    console.error('Failed to create bank:', error);
+                    console.error('Failed to create bank:');
                     this.errorMessage = 'Failed to create bank';
                     this.successMessage = null;
                     this.cdr.markForCheck();
@@ -312,6 +314,40 @@ onUpdate(): void {
             }, 4000);
         }
     }
+    generatePassword() {
+        const length = 12; // Ensure length is >= 8
+        const lowercase = "abcdefghijklmnopqrstuvwxyz";
+        const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const numbers = "0123456789";
+        const specialChars = "@$!%*?&";  // Use only allowed special characters
+        const allChars = lowercase + uppercase + numbers + specialChars;
+    
+        // Ensure at least one of each required character type
+        let password = '';
+        password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
+        password += uppercase.charAt(Math.floor(Math.random() * uppercase.length));
+        password += numbers.charAt(Math.floor(Math.random() * numbers.length));
+        password += specialChars.charAt(Math.floor(Math.random() * specialChars.length));
+    
+        // Generate the remaining characters from the complete character set
+        for (let i = 4; i < length; i++) {
+          password += allChars.charAt(Math.floor(Math.random() * allChars.length));
+        }
+    
+        // Shuffle the password to avoid a predictable pattern
+        password = this.shufflePassword(password);
+    
+        // Set the generated password to the form control
+        this.adminForm.get('password')?.setValue(password);
+      }
+    
+      // Utility function to shuffle the password characters
+      shufflePassword(password: string): string {
+        return password
+          .split('')
+          .sort(() => 0.5 - Math.random())
+          .join('');
+      }
     
     associateAdmin(): void {
         if (this.AssoAdminForm.valid) {

@@ -12,20 +12,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
         type    : 'group',
         icon    : 'heroicons_outline:home',
         children: [
-           /* {
+           {
                 id   : 'dashboards.project',
-                title: 'Project',
+                title: 'Dashbord',
                 type : 'basic',
                 icon : 'heroicons_outline:clipboard-document-check',
                 link : '/dashboards/project',
             },
-            {
-                id   : 'dashboards.analytics',
-                title: 'Analytics',
-                type : 'basic',
-                icon : 'heroicons_outline:chart-pie',
-                link : '/dashboards/analytics',
-            },*/
+    
             {
                 id   : 'pages.settings',
                 title: 'Settings',
@@ -33,7 +27,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon : 'heroicons_outline:cog-8-tooth',
                 link : '/pages/settings',
             },
-            {
+          /*  {
                 id   : 'dashboards.finance',
                 title: 'Finance',
                 type : 'basic',

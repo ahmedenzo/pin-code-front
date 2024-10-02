@@ -51,8 +51,8 @@
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                     <mat-label>Bank Code</mat-label>
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:hashtag'" matPrefix></mat-icon>
-                    <input [formControlName]="'codeBanque'" matInput>
-                    <mat-error *ngIf="accountForm.get('codeBanque').hasError('required') && accountForm.get('codeBanque').touched">
+                    <input [formControlName]="'bankCode'" matInput>
+                    <mat-error *ngIf="accountForm.get('bankCode').hasError('required') && accountForm.get('bankCode').touched">
                         Bank Code is required
                     </mat-error>
                 </mat-form-field>
@@ -228,26 +228,25 @@
             
             <div class="sm:col-span-1">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
-                    <mat-label>Password</mat-label>
-                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
-                    <input 
-                        [type]="showPassword ? 'text' : 'password'" 
-                        [formControlName]="'password'" 
-                        matInput>
-                    <button mat-icon-button matSuffix (click)="togglePasswordVisibility()">
-                        <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-                    </button>
-        
-               
-           
-                    
-                    
-                    
+                  <mat-label>Password</mat-label>
+                  <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+                  <input 
+                    [type]="showPassword ? 'text' : 'password'" 
+                    [formControlName]="'password'" 
+                    matInput>
+                  <button mat-icon-button matSuffix (click)="togglePasswordVisibility()">
+                    <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                  </button>
+                  <!-- Add a button to generate the password -->
+                  <button mat-icon-button matSuffix (click)="generatePassword() "matTooltip="Generate random password">
+                    <mat-icon>key</mat-icon>
+                  </button>
                 </mat-form-field>
                 <div *ngIf="adminForm.get('password')?.errors?.passwordComplexity" class="mt-2 text-red-600 small-text">
-                    Password must be at least 8 characters long and include a mix of upper and lower case letters, numbers, and special characters.
+                  Password must be at least 8 characters long and include a mix of upper and lower case letters, numbers, and special characters.
                 </div>
-            </div>
+              </div>
+              
             
             
             <div class="sm:col-span-1">
