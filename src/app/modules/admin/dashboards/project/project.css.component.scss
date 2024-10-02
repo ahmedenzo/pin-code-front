@@ -24,12 +24,12 @@ table {
   }
   
   .example-element-diagram {
-    min-width: 600px;
+    min-width: 100px;
     border: 2px solid black;
     padding: 8px;
     font-weight: lighter;
     margin: 8px 0;
-    height: 160px;
+    height: 130px;
   }
   
   .example-element-symbol {
@@ -45,4 +45,62 @@ table {
   .example-element-description-attribution {
     opacity: 0.5;
   }
+  .log-table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
   
+  .full-width-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  .expanded-row {
+    background-color: #f9f9f9;
+  }
+  
+  .expanded-row .request-response-container {
+    padding: 15px;
+  }
+  
+  .expanded-row h4 {
+    margin-top: 0;
+  }
+  
+  pre {
+    background-color: #e8e8e8;
+    padding: 10px;
+    border-radius: 5px;
+    white-space: pre-wrap; /* Ensures long content wraps */
+    word-break: break-word;
+  }
+  .example-element-row {
+    cursor: pointer;
+}
+
+.example-detail-row {
+    height: 0;
+}
+
+.example-element-detail {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.example-element-description {
+    font-size: 14px;
+}
+.mat-header-cell, .mat-cell {
+    text-align: left; /* Align the text to the left */
+}
+
+.mat-elevation-z8 {
+    width: 100%; /* Ensure the elevation wrapper takes full width */
+}
+
+.mat-paginator {
+    width: 100%; /* Ensure paginator takes full width */
+}

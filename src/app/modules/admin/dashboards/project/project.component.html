@@ -334,27 +334,11 @@
                 <mat-tab label="Logs">
                     <ng-template matTabContent>
                         <div class="grid grid-cols-1 sm:grid-cols-6 gap-6 w-full min-w-0">
-                            <!-- Budget distribution -->
-                            <div class="sm:col-span-3 lg:col-span-4 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                                <div class="text-lg font-medium tracking-tight leading-6 truncate">Budget Distribution</div>
-                                <div class="flex flex-col flex-auto">
-                                    <apx-chart
-                                        class="flex-auto w-full h-80"
-                                        [chart]="chartBudgetDistribution.chart"
-                                        [colors]="chartBudgetDistribution.colors"
-                                        [dataLabels]="chartBudgetDistribution.dataLabels"
-                                        [markers]="chartBudgetDistribution.markers"
-                                        [plotOptions]="chartBudgetDistribution.plotOptions"
-                                        [series]="chartBudgetDistribution.series"
-                                        [stroke]="chartBudgetDistribution.stroke"
-                                        [tooltip]="chartBudgetDistribution.tooltip"
-                                        [xaxis]="chartBudgetDistribution.xaxis"
-                                        [yaxis]="chartBudgetDistribution.yaxis"></apx-chart>
-                                </div>
-                            </div>
-                            <!-- Expense -->
-                            <div class="sm:col-span-3 lg:col-span-2 grid grid-cols-1 gap-y-6">
-                                <!-- Weekly expenses -->
+                            <!-- 
+    
+                      
+                            <div class="sm:col-span-4 lg:col-span-2 grid grid-cols-2 gap-y-6">
+                           
                                 <div class="sm:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                     <div class="flex items-start justify-between">
                                         <div class="text-lg font-medium tracking-tight leading-6 truncate">Weekly Expenses</div>
@@ -401,7 +385,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Monthly expenses -->
+                               
                                 <div class="sm:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                     <div class="flex items-start justify-between">
                                         <div class="text-lg font-medium tracking-tight leading-6 truncate">Monthly Expenses</div>
@@ -448,7 +432,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Yearly expenses -->
+                               
                                 <div class="sm:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                     <div class="flex items-start justify-between">
                                         <div class="text-lg font-medium tracking-tight leading-6 truncate">Yearly Expenses</div>
@@ -495,64 +479,78 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Budget details -->
+                            </div>-->
                             <div class="sm:col-span-6 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
                                 <div class="text-lg font-medium tracking-tight leading-6 truncate">Log Details</div>
                                 <div class="flex flex-col flex-auto mt-2 overflow-x-auto">
-                                    <table mat-table
-                                    [dataSource]="dataSource" multiTemplateDataRows
-                                    class="mat-elevation-z8">
-                                   @for (column of columnsToDisplay; track column) {
-                                 <ng-container matColumnDef="{{column}}">
-                                   <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                                   <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-                                 </ng-container>
-                               }
-                               <ng-container matColumnDef="expand">
-                                 <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
-                                 <td mat-cell *matCellDef="let element">
-                                   <button mat-icon-button aria-label="expand row" (click)="(expandedElement = expandedElement === element ? null : element); $event.stopPropagation()">
-                                     @if (expandedElement === element) {
-                                       <mat-icon>keyboard_arrow_up</mat-icon>
-                                     } @else {
-                                       <mat-icon>keyboard_arrow_down</mat-icon>
-                                     }
-                                   </button>
-                                 </td>
-                               </ng-container>
-                             
-                               <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-                               <ng-container matColumnDef="expandedDetail">
-                                 <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
-                                   <div class="example-element-detail"
-                                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                                     <div class="example-element-diagram">
-                                       <div class="example-element-position"> {{element.position}} </div>
-                                       <div class="example-element-symbol"> {{element.symbol}} </div>
-                                       <div class="example-element-name"> {{element.name}} </div>
-                                       <div class="example-element-weight"> {{element.weight}} </div>
-                                     </div>
-                                     <div class="example-element-description">
-                                       {{element.description}}
-                                       <span class="example-element-description-attribution"> -- Wikipedia </span>
-                                     </div>
-                                   </div>
-                                 </td>
-                               </ng-container>
-                             
-                               <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
-                               <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;"
-                                   class="example-element-row"
-                                   [class.example-expanded-row]="expandedElement === element"
-                                   (click)="expandedElement = expandedElement === element ? null : element">
-                               </tr>
-                               <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-                             </table>
-                             <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
-                             
+                                    <!-- Make sure the table takes full width -->
+                                    <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8" style="width: 100%;">
+                                        <ng-container matColumnDef="timestamp">
+                                            <th mat-header-cell *matHeaderCellDef> Timestamp </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.timestamp}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="username">
+                                            <th mat-header-cell *matHeaderCellDef> Username </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.username}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="sessionId">
+                                            <th mat-header-cell *matHeaderCellDef> Session ID </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.sessionId}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="requestPath">
+                                            <th mat-header-cell *matHeaderCellDef> Request Path </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.requestPath}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="method">
+                                            <th mat-header-cell *matHeaderCellDef> Method </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.method}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="statusCode">
+                                            <th mat-header-cell *matHeaderCellDef> Status Code </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.statusCode}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="requestBody">
+                                            <th mat-header-cell *matHeaderCellDef> Request Body </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.requestBody}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="responseBody">
+                                            <th mat-header-cell *matHeaderCellDef> Response Body </th>
+                                            <td mat-cell *matCellDef="let element"> {{element.responseBody}} </td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="expand">
+                                            <th mat-header-cell *matHeaderCellDef> Request/Response </th>
+                                            <td mat-cell *matCellDef="let element">
+                                                <button mat-icon-button aria-label="expand row" (click)="expandedElement = expandedElement === element ? null : element; $event.stopPropagation()">
+                                                    <mat-icon *ngIf="expandedElement === element">keyboard_arrow_up</mat-icon>
+                                                    <mat-icon *ngIf="expandedElement !== element">keyboard_arrow_down</mat-icon>
+                                                </button>
+                                            </td>
+                                        </ng-container>
+                                        <!-- Expanded Content Column -->
+                                        <ng-container matColumnDef="expandedDetail">
+                                            <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+                                                <div class="example-element-detail" [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
+                                                    <div class="example-element-description">
+                                                        <strong>Request Body:</strong> <pre>{{element.requestBody}}</pre>
+                                                        <strong>Response Body:</strong> <pre>{{element.responseBody}}</pre>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </ng-container>
+                            
+                                        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+                                        <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand;" class="example-element-row" [class.example-expanded-row]="expandedElement === element" (click)="expandedElement = expandedElement === element ? null : element">
+                                        </tr>
+                                        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                                    </table>
+                                    <!-- Ensure paginator is also full width -->
+                                    <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons style="width: 100%;"></mat-paginator>
                                 </div>
                             </div>
+                            
+                            
+                            
+                            
                         </div>
                     </ng-template>
                 </mat-tab>
