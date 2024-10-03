@@ -145,31 +145,37 @@ export class SettingsPlanBillingComponent implements OnInit, AfterViewInit
     }
     
     
-     createBin(): void {
-    if (this.accountForm.invalid) {
-      return;
+    createBin(): void {
+        if (this.accountForm.invalid) {
+            return;
+        }
+    
+        const tabBinRequest = this.accountForm.value;
+        this._binService.createTabBin(tabBinRequest).subscribe(
+            (response) => {
+                this.successMessage = 'Bin created successfully!';
+                this.errorMessage = null;
+                this.fetchBinsData();
+                this.onCancel();
+                setTimeout(() => {
+                    this.successMessage = null;
+                }, 3000);
+            },
+            (error) => {
+                // Extract the specific message from the error response
+                const errorMessage = error.error?.message || 'Unknown error occurred';
+                this.errorMessage = `Error creating Bin: ${errorMessage}`;
+                console.error('Error response:', error); // Log the error response for debugging
+                setTimeout(() => {
+                    this.errorMessage = null;
+                }, 3000);
+            }
+        );
     }
-
-    const tabBinRequest = this.accountForm.value;
-    this._binService.createTabBin(tabBinRequest).subscribe(
-      (response) => {
-        this.successMessage = 'Bin created successfully!';
-        this.errorMessage = null;
-        this.fetchBinsData();
-        this.onCancel();
-        setTimeout(() => {
-          this.successMessage = null;
-        }, 3000);
-      },
-      (error) => {
-        this.errorMessage = `Error creating Bin`;
-        setTimeout(() => {
-          this.errorMessage = null;
-        }, 3000);
-      }
-    );
-  }
-
+    
+    
+    
+    
   updateBin(): void {
     if (this.accountForm.invalid) {
       return;

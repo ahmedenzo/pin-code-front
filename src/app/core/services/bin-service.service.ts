@@ -36,14 +36,20 @@ export class BinService {
   }
 
   // Create a new TabBin
-  createTabBin(tabBinRequest: any): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this._httpClient.post(`${this.apiUrl}/create`, tabBinRequest, { headers })
-      .pipe(
-        tap(response => console.log('TabBin created successfully', response)),
-        catchError(this.handleError)
-      );
-  }
+// Create a new TabBin
+createTabBin(tabBinRequest: any): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this._httpClient.post(`${this.apiUrl}/create`, tabBinRequest, { headers })
+    .pipe(
+      tap(response => console.log('TabBin created successfully', response)),
+      catchError((error) => {
+          // Log the error message
+          console.error('Error creating TabBin:', error);
+          return this.handleError(error); // Call handleError to process the error
+      })
+    );
+}
+
 
   // Fetch a specific TabBin by bin ID
   getTabBinByBin(bin: string): Observable<any> {

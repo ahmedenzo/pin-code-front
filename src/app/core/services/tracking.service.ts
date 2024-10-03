@@ -83,9 +83,12 @@ export class TrackingService {
   // Get average response time
   getAverageResponseTime(): Observable<string> {
     const headers = this.getAuthHeaders();
-    return this._httpClient.get<string>(`${this.apiUrl}/api/monitor/average-response-time`, { headers })
+    return this._httpClient.get<string>(`${this.apiUrl}/api/monitor/average-response-time`, {
+      headers,
+      responseType: 'text' as 'json', // Cast responseType to 'json' for TypeScript compatibility
+    })
       .pipe(
-        tap(response => console.log('Fetched average response time', response)),
+        tap(response => console.log('Fetched average response time:', response)),
         catchError(this.handleError)
       );
   }
@@ -93,12 +96,22 @@ export class TrackingService {
   // Get error count
   getErrorCount(): Observable<string> {
     const headers = this.getAuthHeaders();
-    return this._httpClient.get<string>(`${this.apiUrl}/api/monitor/error-count`, { headers })
+    console.log('Making GET request to:', `${this.apiUrl}/api/monitor/error-count`);
+    console.log('Headers:', headers);
+  
+    return this._httpClient.get(`${this.apiUrl}/api/monitor/error-count`, { headers, responseType: 'text' })
       .pipe(
-        tap(response => console.log('Fetched error count', response)),
-        catchError(this.handleError)
+        tap(response => {
+          console.log('Raw response from API:', response);
+        }),
+        catchError((error) => {
+          console.error('Error during HTTP request:', error);
+          return this.handleError(error);
+        })
       );
   }
+  
+  
 
   // Get API request distribution by hour
   getApiRequestDistributionByHour(): Observable<Record<string, any>> {

@@ -36,3 +36,12 @@ mat-icon {
 .small-text {
     font-size: 12px; /* Or any size you prefer */
 }
+.active-button {
+    background-color: green;
+    color: white; /* Button text color */
+}
+
+.inactive-button {
+    background-color: red;
+    color: white; /* Button text color */
+}

@@ -1,0 +1,26 @@
+/* Styles for the active button */
+.active-button {
+    background-color: green; /* Green background for active */
+    color: white;            /* White text color */
+    border: none;           /* Remove border */
+    border-radius: 4px;    /* Optional: round the corners */
+    padding: 8px;          /* Optional: add padding */
+}
+
+/* Styles for the inactive button */
+.inactive-button {
+    background-color: red;  /* Red background for inactive */
+    color: white;           /* White text color */
+    border: none;           /* Remove border */
+    border-radius: 4px;    /* Optional: round the corners */
+    padding: 8px;          /* Optional: add padding */
+}
+
+/* Optional: Add hover effects */
+.active-button:hover {
+    background-color: darkgreen; /* Darker green on hover */
+}
+
+.inactive-button:hover {
+    background-color: darkred;   /* Darker red on hover */
+}

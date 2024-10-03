@@ -1,5 +1,5 @@
 import { CurrencyPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatRippleModule } from '@angular/material/core';
@@ -13,9 +13,10 @@ import { ProjectService } from 'app/modules/admin/dashboards/project/project.ser
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject, takeUntil } from 'rxjs';
 import {animate, state, style, transition, trigger} from '@angular/animations';
-import {  MatPaginatorModule,MatPaginator } from '@angular/material/paginator';
+import { MatPaginatorModule,MatPaginator} from '@angular/material/paginator';
 import { ApiRequestLog } from 'app/core/Model/ApiRequestLog.model';
 import { TrackingService } from 'app/core/services/tracking.service';
+import { CommonModule } from '@angular/common';
 
 export interface PeriodicElement {
 
@@ -40,12 +41,12 @@ export interface PeriodicElement {
         ]),
       ],
     standalone     : true,
-    imports        : [TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,MatPaginatorModule],
+    imports        : [TranslocoModule,CommonModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe,MatPaginatorModule],
 })
 export class ProjectComponent implements OnInit, OnDestroy
 {
     private _TrackingService = inject(TrackingService);  
-    @ViewChild(MatPaginator) paginator!: MatPaginator;
+    @ViewChild(MatPaginator) _paginator!: MatPaginator;
     chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
     chartBudgetDistribution: ApexOptions = {};
@@ -53,6 +54,11 @@ export class ProjectComponent implements OnInit, OnDestroy
     chartMonthlyExpenses: ApexOptions = {};
     chartYearlyExpenses: ApexOptions = {};
     data: any;;
+    activeSessionCount:any
+    averageResponseTime:any
+    errorCount: number 
+    activeSessions: any = [];
+    logs: ApiRequestLog[] = [];
     columnsToDisplay: string[] = [
         'timestamp',
         'username',
@@ -76,6 +82,7 @@ export class ProjectComponent implements OnInit, OnDestroy
     constructor(
         private _projectService: ProjectService,
         private _router: Router,
+        private cdr: ChangeDetectorRef 
     )
     {
     }
@@ -100,7 +107,7 @@ export class ProjectComponent implements OnInit, OnDestroy
                 // Prepare the chart data
                 this._prepareChartData();
             });
-
+      
         // Attach SVG fill fixer to all ApexCharts
         window['Apex'] = {
             chart: {
@@ -117,21 +124,94 @@ export class ProjectComponent implements OnInit, OnDestroy
             },
         };
       
-        this.getlogs()
+        this.loadErrorCount();
+        this.loadActiveSessions();
+        this.loadAverageResponseTime()
+        this.getlogs();
+     
     }
-    getlogs(): void {
-        this._TrackingService.getAllLogs().subscribe({
-            next: (response) => {
-                console.log('Fetched logs data:', response);
-                // Assuming the response is an array of ApiRequestLog objects
-                this.dataSource = new MatTableDataSource<ApiRequestLog>(response);
-                this.dataSource.paginator = this.paginator; // Attach the paginator to the data source
+    loadErrorCount(): void {
+        this._TrackingService.getErrorCount().subscribe(
+            (response: string) => {
+                console.log('Raw response:', response); // Log the raw response
+    
+                // Use a regular expression to extract the number from the string
+                const match = response.match(/(\d+)/); // This will match any sequence of digits
+    
+                if (match) {
+                    this.errorCount = Number(match[0]); // Convert the matched string to a number
+                } else {
+                    console.error('No number found in response:', response);
+                    this.errorCount = 0; // Handle the case where no number is found
+                }
+    
+                console.log('Error count:', this.errorCount); // Log the final error count
             },
-            error: (error) => {
+            (error) => {
+                console.error('Error fetching error count:', error);
+            }
+        );
+    }
+    
+    
+    loadAverageResponseTime(): void {
+        this._TrackingService.getAverageResponseTime().subscribe(
+            (response: string) => {
+                console.log('Raw response:', response); // Log the raw response
+    
+                // Use a regular expression to extract the numeric part from the string
+                const match = response.match(/(\d+(\.\d+)?)/); // Match digits, including decimal
+    
+                if (match) {
+                    // Convert the matched string to a number and round to three decimal places
+                    this.averageResponseTime = Number(match[0]).toFixed(3); // Keeps three decimal places
+                } else {
+                    console.error('No valid number found in response:', response);
+                    this.averageResponseTime = '0.000'; // Handle the case where no number is found
+                }
+    
+                console.log('Average Response Time:', this.averageResponseTime); // Log the final average response time
+            },
+            (error) => {
+                console.error('Error fetching average response time:', error);
+            }
+        );
+    }
+    
+      loadActiveSessions(): void {
+        this._TrackingService.getActiveSessions().subscribe(
+          (response: any[]) => {  // Assuming the response is an array of active sessions
+            this.activeSessions = response;
+            this.activeSessionCount = this.activeSessions.length;  // Count the number of active sessions
+            console.log('Active sessions:', this.activeSessions);
+            console.log('Number of active sessions:', this.activeSessionCount);
+          },
+          (error) => {
+            console.error('Error fetching active sessions:', error);
+          }
+        );
+      }
+      
+
+    getlogs(): void {
+        this._TrackingService.getAllLogs().subscribe(
+            (response: ApiRequestLog[]) => {
+                // Sort logs by timestamp in descending order
+                this.logs = response.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    
+                // Assign the sorted logs to the dataSource
+                this.dataSource = new MatTableDataSource<ApiRequestLog>(this.logs);
+    
+                // Initialize paginator after assigning data
+                this.dataSource.paginator = this._paginator;
+            },
+            (error) => {
                 console.error('Error fetching logs:', error);
             }
-        });
+        );
     }
+    
+    
     
     /**
      * On destroy
@@ -196,6 +276,69 @@ export class ProjectComponent implements OnInit, OnDestroy
      */
     private _prepareChartData(): void
     {
+
+        this.chartBudgetDistribution = {
+            chart      : {
+                fontFamily: 'inherit',
+                foreColor : 'inherit',
+                height    : '100%',
+                type      : 'radar',
+                sparkline : {
+                    enabled: true,
+                },
+            },
+            colors     : ['#818CF8'],
+            dataLabels : {
+                enabled   : true,
+                formatter : (val: number): string | number => `${val}%`,
+                textAnchor: 'start',
+                style     : {
+                    fontSize  : '13px',
+                    fontWeight: 500,
+                },
+                background: {
+                    borderWidth: 0,
+                    padding    : 4,
+                },
+                offsetY   : -15,
+            },
+            markers    : {
+                strokeColors: '#818CF8',
+                strokeWidth : 4,
+            },
+            plotOptions: {
+                radar: {
+                    polygons: {
+                        strokeColors   : 'var(--fuse-border)',
+                        connectorColors: 'var(--fuse-border)',
+                    },
+                },
+            },
+            series     : this.data.budgetDistribution.series,
+            stroke     : {
+                width: 2,
+            },
+            tooltip    : {
+                theme: 'dark',
+                y    : {
+                    formatter: (val: number): string => `${val}%`,
+                },
+            },
+            xaxis      : {
+                labels    : {
+                    show : true,
+                    style: {
+                        fontSize  : '12px',
+                        fontWeight: '500',
+                    },
+                },
+                categories: this.data.budgetDistribution.categories,
+            },
+            yaxis      : {
+                max       : (max: number): number => parseInt((max + 10).toFixed(0), 10),
+                tickAmount: 7,
+            },
+        };
         // Github issues
         this.chartGithubIssues = {
             chart      : {
@@ -334,68 +477,7 @@ export class ProjectComponent implements OnInit, OnDestroy
         };
 
         // Budget distribution
-        this.chartBudgetDistribution = {
-            chart      : {
-                fontFamily: 'inherit',
-                foreColor : 'inherit',
-                height    : '100%',
-                type      : 'radar',
-                sparkline : {
-                    enabled: true,
-                },
-            },
-            colors     : ['#818CF8'],
-            dataLabels : {
-                enabled   : true,
-                formatter : (val: number): string | number => `${val}%`,
-                textAnchor: 'start',
-                style     : {
-                    fontSize  : '13px',
-                    fontWeight: 500,
-                },
-                background: {
-                    borderWidth: 0,
-                    padding    : 4,
-                },
-                offsetY   : -15,
-            },
-            markers    : {
-                strokeColors: '#818CF8',
-                strokeWidth : 4,
-            },
-            plotOptions: {
-                radar: {
-                    polygons: {
-                        strokeColors   : 'var(--fuse-border)',
-                        connectorColors: 'var(--fuse-border)',
-                    },
-                },
-            },
-            series     : this.data.budgetDistribution.series,
-            stroke     : {
-                width: 2,
-            },
-            tooltip    : {
-                theme: 'dark',
-                y    : {
-                    formatter: (val: number): string => `${val}%`,
-                },
-            },
-            xaxis      : {
-                labels    : {
-                    show : true,
-                    style: {
-                        fontSize  : '12px',
-                        fontWeight: '500',
-                    },
-                },
-                categories: this.data.budgetDistribution.categories,
-            },
-            yaxis      : {
-                max       : (max: number): number => parseInt((max + 10).toFixed(0), 10),
-                tickAmount: 7,
-            },
-        };
+
 
         // Weekly expenses
         this.chartWeeklyExpenses = {

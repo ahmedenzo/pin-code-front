@@ -67,17 +67,12 @@ export class SettingsComponent implements OnInit, OnDestroy
                 title      : 'Bins',
                 description: 'Manage Bins ',
             },
-            {
-                id         : 'notifications',
-                icon       : 'heroicons_outline:bell',
-                title      : 'Notifications',
-                description: 'Manage when you\'ll be notified on which channels',
-            },
+ 
             {
                 id         : 'team',
                 icon       : 'heroicons_outline:user-group',
                 title      : 'Team',
-                description: 'Manage your existing team and change roles/permissions',
+                description: 'Manage your existing team and change Status',
             },
         ];
 

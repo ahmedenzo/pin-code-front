@@ -44,7 +44,21 @@ export class BankServiceService {
             );
     }
     
+    updateUser(updateUserRequest: any): Observable<any> {
+        const url = `${this.apiUrl}/api/auth/update`;  // Assuming the backend URL for user update
+        const accessToken = localStorage.getItem('accessToken');
+        
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'  // JSON request body
+        });
 
+        // Make PUT request to update the user
+        return this._httpClient.put<any>(url, updateUserRequest, { headers })
+            .pipe(
+                catchError(this.handleError)  // Error handling
+            );
+    }
  
 
     getAllBanks(): Observable<any> {
