@@ -1,3 +1,4 @@
+
 <div class="flex flex-col w-full min-w-0 sm:absolute sm:inset-0 sm:overflow-hidden">
 
     <mat-drawer-container class="flex-auto sm:h-full">
@@ -25,7 +26,7 @@
             <!-- Panel links -->
             <div class="flex flex-col divide-y border-t border-b">
                 <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
-                    <div
+                    <div *ngIf="panel?.title && panel?.description" 
                         class="flex px-8 py-5 cursor-pointer"
                         [ngClass]="{'hover:bg-gray-100 dark:hover:bg-hover': !selectedPanel || selectedPanel !== panel.id,
                                     'bg-primary-50 dark:bg-hover': selectedPanel && selectedPanel === panel.id}"
@@ -47,6 +48,7 @@
                     </div>
                 </ng-container>
             </div>
+            
         </mat-drawer>
 
         <!-- Drawer content -->
@@ -68,7 +70,7 @@
 
                     <!-- Panel title -->
                     <div class="ml-2 lg:ml-0 text-3xl font-bold tracking-tight leading-none">
-                        {{getPanelInfo(selectedPanel).title}}
+                        {{getPanelInfo(selectedPanel)?.title}}
                     </div>
                 </div>
 
@@ -83,9 +85,18 @@
                         <ng-container *ngSwitchCase="'security'">
                             <settings-security></settings-security>
                         </ng-container>
+                        <ng-container *ngSwitchCase="'securityadmin'">
+                            <app-security-admin></app-security-admin>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'agency'">
+                            <app-settings-account-admin></app-settings-account-admin>
+                        </ng-container>
                         <!-- Plan & Billing -->
                         <ng-container *ngSwitchCase="'plan-billing'">
                             <settings-plan-billing></settings-plan-billing>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="'adminteam'">
+                            <app-team-admin></app-team-admin>
                         </ng-container>
                         <!-- Notifications -->
                         <ng-container *ngSwitchCase="'notifications'">

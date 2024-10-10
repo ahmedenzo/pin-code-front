@@ -17,6 +17,7 @@ import { MatPaginatorModule,MatPaginator} from '@angular/material/paginator';
 import { ApiRequestLog } from 'app/core/Model/ApiRequestLog.model';
 import { TrackingService } from 'app/core/services/tracking.service';
 import { CommonModule } from '@angular/common';
+import { UserService } from 'app/core/user/user.service';
 
 export interface PeriodicElement {
 
@@ -68,7 +69,7 @@ export class ProjectComponent implements OnInit, OnDestroy
         'statusCode',
    
     ];
-    
+    isSuperAdmin: boolean = false;
     dataSource: MatTableDataSource<ApiRequestLog>;
     columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
 
@@ -82,7 +83,8 @@ export class ProjectComponent implements OnInit, OnDestroy
     constructor(
         private _projectService: ProjectService,
         private _router: Router,
-        private cdr: ChangeDetectorRef 
+        private cdr: ChangeDetectorRef ,
+        private _userService: UserService
     )
     {
     }
@@ -96,6 +98,21 @@ export class ProjectComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
+        this._userService.user$.subscribe(user => {
+            if (user && user.roles) {
+                console.log('User roles in ProjectComponent:', user.roles); // Log user roles
+                this.isSuperAdmin = user.roles.includes('ROLE_SUPER_ADMIN'); // Check for super admin role
+
+                // Load specific data if user is Super Admin
+                if (this.isSuperAdmin) {
+                    this.loadErrorCount();
+                    this.loadActiveSessions();
+                    this.loadAverageResponseTime();
+                    this.getlogs();
+                }
+            }
+        });
+        
         // Get the data
         this._projectService.data$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -124,10 +141,7 @@ export class ProjectComponent implements OnInit, OnDestroy
             },
         };
       
-        this.loadErrorCount();
-        this.loadActiveSessions();
-        this.loadAverageResponseTime()
-        this.getlogs();
+
      
     }
     loadErrorCount(): void {

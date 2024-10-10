@@ -1,12 +1,15 @@
+
+import { TabBank } from "../Model/Bank.model";
 export interface User {
-    id?: string;                  // Optional
-    username: string;            // Required
-    password: string;            // Required
-    email?: string;              // Optional
-    phoneNumber?: string;        // Optional
-    role?: string;            
-    adminId?: string;            // Optional, references the admin
-    bankId?: string;             // Optional, references the bank
-    agencyId?: string;     
-          // Optional, references the agency
+    id?: string;
+    username: string;
+    password?: string;
+    email?: string;
+    phoneNumber?: string;
+    roles?: string[];
+    bank?:TabBank
+    adminId?: string;
+    bankId?: string;
+    agencyId?: string;
+    sessionId?: string;
 }

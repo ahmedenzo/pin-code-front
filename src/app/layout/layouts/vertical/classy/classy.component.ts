@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
@@ -20,19 +20,42 @@ import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.compon
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { Subject, takeUntil } from 'rxjs';
 
+import { Subscription } from 'rxjs';
 @Component({
     selector     : 'classy-layout',
     templateUrl  : './classy.component.html',
     encapsulation: ViewEncapsulation.None,
     standalone   : true,
-    imports      : [FuseLoadingBarComponent, FuseVerticalNavigationComponent, NotificationsComponent, UserComponent, NgIf, MatIconModule, MatButtonModule, LanguagesComponent, FuseFullscreenComponent, SearchComponent, ShortcutsComponent, MessagesComponent, RouterOutlet, QuickChatComponent],
+    imports      : [
+        FuseLoadingBarComponent,
+        FuseVerticalNavigationComponent,
+        NotificationsComponent,
+        UserComponent,
+        NgIf,
+        MatIconModule,
+        MatButtonModule,
+        LanguagesComponent,
+        FuseFullscreenComponent,
+        SearchComponent,
+        ShortcutsComponent,
+        MessagesComponent,
+        RouterOutlet,
+        QuickChatComponent
+    ],
 })
 export class ClassyLayoutComponent implements OnInit, OnDestroy
 {
+ 
     isScreenSmall: boolean;
     navigation: Navigation;
     user: User;
+    role: string[] = [];
+    id: string | null = null; // Store the user ID
+    private subscriptions: Subscription = new Subscription();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    admins : any [] =[]
+    bankName: string | null = null; 
+    bankLogo: string | null = null;  
 
     /**
      * Constructor
@@ -69,7 +92,22 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        // Subscribe to navigation data
+
+        this.subscriptions.add(
+            this._userService.user$.subscribe(user => {
+              if (user && user.roles) {
+                console.log('User roles in ProjectComponent:', user.roles);
+                this.role = user.roles;
+                this.id = user.id; // Get the user ID
+      
+                // Check user role and fetch user details if Admin
+                if (this.role.includes('ROLE_ADMIN')) {
+                  this.fetchUserById(this.id);
+                }
+              }
+            })
+          );
+      
         this._navigationService.navigation$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((navigation: Navigation) =>
@@ -78,12 +116,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
             });
 
         // Subscribe to the user service
-        this._userService.user$
-            .pipe((takeUntil(this._unsubscribeAll)))
-            .subscribe((user: User) =>
-            {
-                this.user = user;
-            });
+  
 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
@@ -94,7 +127,34 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
                 this.isScreenSmall = !matchingAliases.includes('md');
             });
     }
+    private fetchUserById(userId: string | null): void {
+        if (userId) {
+          this.subscriptions.add(
+            this._userService.getUserById(userId).subscribe(
+              (user: User) => {
+                console.log('User details ahmedddddd:', user);
+          
+                this.bankName = user.bank?.name || null; 
+                this.bankLogo = user.bank?.logo || null; 
+              },
+              (error) => {
+                console.error('Error fetching user by ID:', error);
+              }
+            )
+          );
+        }
+      }
+      base64ToBlob(base64: string, type: string): Blob {
+        const byteCharacters = atob(base64);
+        const byteNumbers = new Uint8Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        return new Blob([byteNumbers], { type });
+    }
 
+    
+ 
     /**
      * On destroy
      */
@@ -106,5 +166,3 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
     }
 
 }
-
-

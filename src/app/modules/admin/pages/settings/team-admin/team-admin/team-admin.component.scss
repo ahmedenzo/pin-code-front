@@ -1,0 +1,17 @@
+/* team-admin.component.scss */
+
+.expandable-row {
+    transition: all 0.3s ease;
+  }
+  
+  .expandable-row.ng-enter, .expandable-row.ng-leave {
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+  
+  .expandable-row.ng-enter-active, .expandable-row.ng-leave-active {
+    height: auto;
+    opacity: 1;
+  }
+  

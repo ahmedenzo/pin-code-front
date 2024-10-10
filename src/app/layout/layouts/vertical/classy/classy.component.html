@@ -24,27 +24,25 @@
             </div>
         </div>
         <!-- User -->
-        <div class="flex flex-col items-center w-full p-4">
-            <div class="relative w-24 h-24">
-                 <img
-                    class="w-full h-full rounded-full"
-            
-                    src="assets\images\logo\logomonetique.jpg"
-                    alt="User avatar">
-              <!--   <mat-icon
-                    class="icon-size-24"src\assets\images\logo\logomonetique.jpg
-                    *ngIf="!user.avatar"
-                    [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>--> 
-            </div>
-            <div class="flex flex-col items-center justify-center w-full mt-4">
-                <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
-                    <!--   {{user.name}}--> <h2>SuperAdmin: MonetiqueTunisie</h2>
-                </div>
-                <div class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary">
-                   <!--  {{user.email}}  <h2>Agnece Code : *</h2>-->
-                </div>
-            </div>
+<!-- User -->
+<div class="flex flex-col items-center w-full p-4">
+    <div class="relative w-24 h-24">
+        <img
+            class="w-full h-full rounded-full"
+            [src]="role.includes('ROLE_ADMIN') && bankLogo ? 'data:image/png;base64,' + bankLogo : 'assets/images/logo/logomonetique.jpg'"
+            alt="User avatar">
+    </div>
+    <div class="flex flex-col items-center justify-center w-full mt-4">
+        <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
+            <h2 *ngIf="role.includes('ROLE_SUPER_ADMIN')">SuperAdmin: MonetiqueTunisie</h2>
+            <h2 *ngIf="role.includes('ROLE_ADMIN')">Admin: {{ bankName }}</h2>
         </div>
+
+        <!-- Display user details for Admin -->
+    </div>
+</div>
+
+        
     </ng-container>
     <!-- Navigation footer hook -->
     <ng-container fuseVerticalNavigationContentFooter>
