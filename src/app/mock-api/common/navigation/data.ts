@@ -27,6 +27,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon : 'heroicons_outline:cog-8-tooth',
                 link : '/pages/settings',
             },
+            {
+            id   : 'pages.file-manager',
+            title: 'File Manager',
+            type : 'basic',
+            icon : 'heroicons_outline:cloud',
+            link : '/pages/file-manager',
+        },
           /*  {
                 id   : 'dashboards.finance',
                 title: 'Finance',
@@ -95,12 +102,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 ],
             },
             {
-                id   : 'apps.file-manager',
-                title: 'File Manager',
-                type : 'basic',
-                icon : 'heroicons_outline:cloud',
-                link : '/apps/file-manager',
-            },
+
             {
                 id      : 'apps.help-center',
                 title   : 'Help Center',

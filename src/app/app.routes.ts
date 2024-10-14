@@ -138,6 +138,7 @@ export const appRoutes: Route[] = [
 
                 // Settings
                 {path: 'settings', loadChildren: () => import('app/modules/admin/pages/settings/settings.routes')},
+                {path: 'file-manager', loadChildren: () => import('app/modules/admin/apps/file-manager/file-manager.routes')},
             ]},
 
             // User Interface
