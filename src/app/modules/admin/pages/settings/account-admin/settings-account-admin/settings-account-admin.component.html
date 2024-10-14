@@ -144,7 +144,7 @@
         mat-flat-button
         type="button"
         [color]="'primary'"
-        [disabled]="accountForm.invalid || ( !isEditMode)"
+    
         (click)="isEditMode ? onUpdate() : onSave()">
         {{ isEditMode ? 'Update Agency' : 'Create Agency' }}
     </button>
@@ -300,7 +300,7 @@
                 <mat-label>Agent</mat-label>
                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:user'" matPrefix></mat-icon>
                 <mat-select [formControlName]="'userId'">
-                    <mat-option *ngFor="let admin of agents" [value]="user.id">
+                    <mat-option *ngFor="let admin of agents" [value]="admin.id">
                         {{ admin.username }} 
                     </mat-option>
                 </mat-select>
@@ -311,8 +311,8 @@
             <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                 <mat-label>Agency</mat-label>
                 <mat-icon svgIcon="heroicons_outline:building-library"></mat-icon>
-                <mat-select [formControlName]="'agencyId'">
-                    <mat-option *ngFor="let agence of Agency" [value]="agence.agencyId">
+                <mat-select formControlName="agencyId">
+                    <mat-option *ngFor="let agence of Agency" [value]="agence.id">
                         {{ agence.name }}
                     </mat-option>
                 </mat-select>

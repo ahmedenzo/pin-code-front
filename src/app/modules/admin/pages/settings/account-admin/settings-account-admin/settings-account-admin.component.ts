@@ -271,10 +271,8 @@ onUpdate(): void {
  loadagency(): void {
       this._AgencyService.listAllAgencies().subscribe({
           next: (response) => {
-              if (response && response.Agency && Array.isArray(response.Agency)) {
-                  this.Agency = [...response.Agency];  
-                  this.cdr.detectChanges();  
-              }
+          this.Agency=response
+          console.log("les agance sont ",this.Agency)
           },
           error: (error) => {
               console.error('Error fetching banks:', error);
@@ -322,7 +320,8 @@ onUpdate(): void {
                   this.errorMessage = null;
                   this.accountForm.reset();
         
-
+                  this.loadagency()
+                  this.getagents()
                   this.cdr.markForCheck();
   
                   setTimeout(() => {
@@ -426,7 +425,7 @@ onUpdate(): void {
       if (this.adminForm.valid) {
          
           const user = this.adminForm.value;
-  
+  console.log('ogagent',user)
         
           user.role = ['user']; 
   
@@ -438,7 +437,8 @@ onUpdate(): void {
                   this.adminForm.reset();  
                   this.cdr.markForCheck();
             
-  
+             this.loadagency()
+             this.getagents()
                   setTimeout(() => {
                       this.successMessageadmin = null;
                       this.cdr.markForCheck();

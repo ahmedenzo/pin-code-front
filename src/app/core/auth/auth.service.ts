@@ -18,8 +18,7 @@ export class AuthService {
     private _userService = inject(UserService);
     private apiUrl = environment.apiUrl;
     private _alertSubject = new BehaviorSubject<string | null>(null);
-    private _signingOut: boolean = false; 
-    private _isSignedOut: boolean = true;
+ 
     public alert$ = this._alertSubject.asObservable();
 
     // -----------------------------------------------------------------------------------------------------
@@ -44,9 +43,7 @@ export class AuthService {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    isAuthenticated(): boolean {
-        return this._authenticated && !this._signingOut;  // Return false if signing out
-    }
+ 
 
     /**
      * Trigger an alert to display to the user
@@ -111,14 +108,10 @@ export class AuthService {
  * Sign out
  */
 signOut(): Observable<any> {
-    this._signingOut = true; // Set flag to true when signing out
+  
 
     const accessToken = this.accessToken;
 
-    if (!accessToken) {
-        this._clearSession(); // Ensure session is cleared
-        return of(false);
-    }
 
     const headers = new HttpHeaders({
         'Authorization': `Bearer ${accessToken}`
@@ -134,14 +127,10 @@ signOut(): Observable<any> {
             this._clearSession(); 
             return throwError(error);
         }),
-        finalize(() => {
-            this._signingOut = false;  // Reset the flag after sign-out is complete
-        })
+   
     );
 }
-isSigningOut(): boolean {
-    return this._signingOut;
-}
+
 
 
 private _clearSession(): void {
@@ -159,24 +148,28 @@ private _clearSession(): void {
     /**
      * Check the authentication status
      */
-    check(): Observable<boolean> {
-        if (this._authenticated) {
+  check(): Observable<boolean>
+    {
+        // Check if the user is logged in
+        if ( this._authenticated )
+        {
             return of(true);
         }
 
-        if (!this.accessToken || AuthUtils.isTokenExpired(this.accessToken)) {
-            // Attempt to refresh the access token using the refresh token
-            return this.refreshAccessToken().pipe(
-                map(() => true),
-                catchError((error) => {
-                    this.signOut().subscribe();
-                    return of(false);
-                })
-            );
+        // Check the access token availability
+        if ( !this.accessToken )
+        {
+            return of(false);
         }
 
-        this._authenticated = true;
-        return of(true);
+        // Check the access token expire date
+        if ( AuthUtils.isTokenExpired(this.accessToken) )
+        {
+            return of(false);
+        }
+
+        // If the access token exists, and it didn't expire, sign in using it
+       
     }
 
     /**
