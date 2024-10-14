@@ -1,13 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, map, Observable, of, switchMap, tap, throwError,filter,take } from 'rxjs';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
-
 import { environment } from '../../../../environment.prod';
 import { TokenService } from './token.service';
 import { CookieService } from './cookie.service';
-
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -18,8 +16,9 @@ export class AuthService {
     private _userService = inject(UserService);
     private apiUrl = environment.apiUrl;
     private _alertSubject = new BehaviorSubject<string | null>(null);
- 
     public alert$ = this._alertSubject.asObservable();
+    private isRefreshing = false;
+    private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null); // Shared token
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -29,21 +28,19 @@ export class AuthService {
      * Setter & getter for access token
      */
     set accessToken(token: string) {
-        this._tokenService.setToken(token);  // Corrected to use the passed token instead of a hardcoded value
+        this._tokenService.setToken(token);  // Save the token securely using TokenService
     }
 
     /**
      * Getter for access token
      */
     get accessToken(): string {
-        return this._tokenService.getToken() ?? '';  // Returns the decrypted token or an empty string if not available
+        return this._tokenService.getToken() ?? '';  // Retrieve the token from TokenService
     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
- 
 
     /**
      * Trigger an alert to display to the user
@@ -62,31 +59,33 @@ export class AuthService {
         if (this._authenticated) {
             return throwError(() => new Error('User is already logged in.'));
         }
-    
+
         return this._httpClient.post(`${this.apiUrl}/api/auth/signin`, credentials, { withCredentials: true }).pipe(
             switchMap((response: any) => {
                 const token = response.token; 
                 const refreshToken = response.refreshToken;
-    
-                if (!token) {
-                    return throwError(() => new Error('Access token is missing from the response.'));
+
+                if (!token || !refreshToken) {
+                    return throwError(() => new Error('Access or refresh token is missing from the response.'));
                 }
-    
+
+                // Save the access token and refresh token
                 this.accessToken = token;             
                 this._authenticated = true;
-    
+
                 const userData = {
                     id: response.id,
                     username: response.username,
                     roles: response.roles,
                     sessionId: response.sessionId,
-                    adminId: response.adminId, // Make sure this is set
-                    bankId: response.bankId,    // Make sure this is set
-                    agencyId: response.agencyId   // Make sure this is set
+                    adminId: response.adminId,
+                    bankId: response.bankId,
+                    agencyId: response.agencyId
                 };
+                
                 this._userService.user = userData; // Set the user data in UserService
-                this._CookieService.setCookie('userData', JSON.stringify(userData), 7); // Set cookie
-    
+                this._CookieService.setCookie('userData', JSON.stringify(userData), 7); // Set cookie for user data
+                
                 return of(response);
             }),
             catchError((error) => {
@@ -97,127 +96,110 @@ export class AuthService {
             })
         );
     }
-    
-    
-    
 
     /**
      * Sign out
      */
-/**
- * Sign out
- */
-signOut(): Observable<any> {
-  
+    signOut(): Observable<any> {
+        const accessToken = this.accessToken;
 
-    const accessToken = this.accessToken;
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`
+        });
 
+        return this._httpClient.post(`${this.apiUrl}/api/auth/signout`, {}, { headers, withCredentials: true }).pipe(
+            tap(() => {
+                console.log('API sign-out success');
+                this._clearSession(); 
+            }),
+            catchError((error) => {
+                console.error('Error during sign-out: ', error);
+                this._clearSession(); 
+                return throwError(error);
+            }),
+        );
+    }
 
-    const headers = new HttpHeaders({
-        'Authorization': `Bearer ${accessToken}`
-    });
-
-    return this._httpClient.post(`${this.apiUrl}/api/auth/signout`, {}, { headers, withCredentials: true }).pipe(
-        tap(() => {
-            console.log('API sign-out success');
-            this._clearSession(); 
-        }),
-        catchError((error) => {
-            console.error('Error during sign-out: ', error);
-            this._clearSession(); 
-            return throwError(error);
-        }),
-   
-    );
-}
-
-
-
-private _clearSession(): void {
-    this._tokenService.removeToken();  // Remove token from storage
-    this._CookieService.deleteCookie('userData');  // Remove user data cookie
-    this._authenticated = false;  // Set authenticated to false
-
-}
-
-
-
-
-
+    /**
+     * Clear session data
+     */
+    private _clearSession(): void {
+        this._tokenService.removeToken();  // Remove token from storage
+        this._CookieService.deleteCookie('userData');  // Remove user data cookie
+        this._authenticated = false;  // Set authenticated to false
+    }
 
     /**
      * Check the authentication status
      */
-  check(): Observable<boolean>
-    {
+    check(): Observable<boolean> {
         // Check if the user is logged in
-        if ( this._authenticated )
-        {
+        if (this._authenticated) {
             return of(true);
         }
 
-        // Check the access token availability
-        if ( !this.accessToken )
-        {
+        // Check the access token availability and expiration
+        if (!this.accessToken || AuthUtils.isTokenExpired(this.accessToken)) {
             return of(false);
         }
 
-        // Check the access token expire date
-        if ( AuthUtils.isTokenExpired(this.accessToken) )
-        {
-            return of(false);
-        }
-
-        // If the access token exists, and it didn't expire, sign in using it
-       
+        // If the access token exists and isn't expired, assume user is authenticated
+        return of(true);
     }
 
     /**
      * Refresh the access token using the refresh token stored in cookies
      */
-  // Updated refreshAccessToken method to ensure consistency
-  /**
- * Refresh the access token using the refresh token stored in cookies
- */
-  refreshAccessToken(): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/api/auth/refreshToken`, {}, { withCredentials: true }).pipe(
-        switchMap((response: any) => {
-            const newAccessToken = response.accessToken;
+    refreshAccessToken(): Observable<any> {
+        if (this.isRefreshing) {
+            // If refresh is already in progress, return the subject as an observable
+            return this.refreshTokenSubject.pipe(
+                filter(token => token !== null),  // Proceed only when we have a new token
+                take(1),  // Complete after taking the next emitted token value
+                switchMap(() => of(this.accessToken))  // Return the latest access token
+            );
+        } else {
+            // Mark that the refresh process is in progress
+            this.isRefreshing = true;
+            this.refreshTokenSubject.next(null);  // Reset the subject to indicate refreshing
 
-            if (!newAccessToken) {
-                return throwError(() => new Error('Invalid token response.'));
-            }
+            return this._httpClient.post(`${this.apiUrl}/api/auth/refreshToken`, {}, { withCredentials: true }).pipe(
+                switchMap((response: any) => {
+                    const newAccessToken = response.accessToken;
 
-            // Set new access token
-            this.accessToken = newAccessToken;
+                    if (!newAccessToken) {
+                        return throwError(() => new Error('Invalid token response.'));
+                    }
 
-            return of(response);
-        }),
-        catchError((error: HttpErrorResponse) => {
-            console.error('Error during token refresh:', error);
-            this.signOut().subscribe();
-            return throwError(error);
-        })
-    );
-}
+                    // Save the new access token
+                    this.accessToken = newAccessToken;
 
+                    // Broadcast the new access token to all subscribers
+                    this.refreshTokenSubject.next(newAccessToken);
+                    this.isRefreshing = false;
 
+                    // Log for debugging purposes
+          
 
-
-
-
-
-    /**
-     * Handle unauthorized errors (e.g., invalid or expired tokens)
-     */
-  
+                    return of(newAccessToken);  // Return the new access token
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    console.error('Error during token refresh:', error);
+                    this.signOut().subscribe();  // Sign out if token refresh fails
+                    this.isRefreshing = false;
+                    return throwError(error);
+                })
+            );
+        }
+    }
+    
 
     /**
      * Forgot password
      * @param email
      */
     forgotPassword(email: string): Observable<any> {
-        return this._httpClient.post('api/auth/forgot-password', email);
+        return this._httpClient.post(`${this.apiUrl}/api/auth/forgot-password`, email);
     }
 
     /**
@@ -225,7 +207,7 @@ private _clearSession(): void {
      * @param password
      */
     resetPassword(password: string): Observable<any> {
-        return this._httpClient.post('api/auth/reset-password', password);
+        return this._httpClient.post(`${this.apiUrl}/api/auth/reset-password`, password);
     }
 
     /**
@@ -233,7 +215,7 @@ private _clearSession(): void {
      * @param user
      */
     signUp(user: { name: string; email: string; password: string; company: string }): Observable<any> {
-        return this._httpClient.post('api/auth/sign-up', user);
+        return this._httpClient.post(`${this.apiUrl}/api/auth/sign-up`, user);
     }
 
     /**
@@ -241,6 +223,6 @@ private _clearSession(): void {
      * @param credentials
      */
     unlockSession(credentials: { username: string; password: string }): Observable<any> {
-        return this._httpClient.post('api/auth/unlock-session', credentials);
+        return this._httpClient.post(`${this.apiUrl}/api/auth/unlock-session`, credentials);
     }
 }
