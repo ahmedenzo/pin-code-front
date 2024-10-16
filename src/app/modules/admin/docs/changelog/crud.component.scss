@@ -1,0 +1,50 @@
+.flex-80 {
+    flex: 0 0 60%; /* Card Number takes 80% of the width */
+  }
+  
+  .flex-20 {
+    flex: 0 0 20%; /* Expiration takes 20% of the width */
+  }
+  
+  .gap-4 {
+    gap: 1rem; /* Adds space between Card Number and Expiration fields */
+  }
+  
+  .mat-form-field {
+    width: 100%;
+  }
+  
+  .w-full {
+    width: 100%;
+  }
+  
+  .mt-4 {
+    margin-top: 1rem;
+  }
+  .bg-skyblue {
+    background-color: #ebeff2; /* Dark blue background similar to your image */
+}
+
+.bg-white {
+    background-color: #f0f0f0; /* Light grey or white for form backgrounds */
+}
+
+  .bigger-input {
+    height: 3rem;  /* Increases height of input fields */
+    font-size: 1.1rem; /* Increases font size */
+    padding: 0.75rem;  /* Adjusts padding for input */
+  }
+  
+  .bigger-button {
+    padding: 0.75rem 1rem; /* Increases button size */
+    font-size: 1.2rem; /* Increases button text size */
+  }
+  
+  .w-20 {
+    width: 5rem;
+  }
+  
+  .h-20 {
+    height: 5rem;
+  }
+  
