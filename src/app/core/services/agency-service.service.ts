@@ -43,6 +43,19 @@ export class AgencyService {
                 catchError(this.handleError)
             );
     }
+    listAllAgenciesAssociatedUser(): Observable<any> {
+        const url = `${this.apiUrl}/api/agency/listassociateduser`;
+        const accessToken = localStorage.getItem('accessToken');
+        
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${accessToken}`
+        });
+
+        return this._httpClient.get<any>(url, { headers })
+            .pipe(
+                catchError(this.handleError)
+            );
+    }
 
     // Delete an agency by ID
     deleteAgency(id: number): Observable<any> {

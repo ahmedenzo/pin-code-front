@@ -36,7 +36,6 @@
     </mat-form-field>
 </div>
 
-
 <!-- Table Section -->
 <div class="bg-white shadow-md rounded-lg p-6 w-full">
     <h2 class="text-2xl font-semibold mb-4">Agency Information</h2>
@@ -48,39 +47,45 @@
         <thead class="bg-gray-50">
             <tr>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agency Name
+                    Agency-Name
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agency Code
+                    Agency-Code
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Agency-Email
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Agency-City
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Region
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    City
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agency Contact
-                </th>
-                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Agent Username
+                    Username
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Action
                 </th>
                 <th scope="col" class="px-6 py-3"></th>
             </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let agency of filteredAgencies">
+            <tr *ngFor="let agency of paginatedAgencies"> <!-- This is where agency is defined -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ agency.agencyName }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.agencyCode }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.region }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.agencyEmail }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.city }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.agencyContact }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ agency.agentUsername }}</td>
-                
-                <!-- Custom Toggle Button for status -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ agency.region }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ agency.username }}</td>
+        
+                <!-- Edit Button -->
+
+        
+                <!-- Toggle Button for activation status -->
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     <button
                         class="px-2 py-1 text-white rounded-full focus:outline-none"
@@ -89,11 +94,20 @@
                         {{ agency.active ? 'Active' : 'Inactive' }}
                     </button>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button
+                        class="px-2 py-1 text-white rounded-full bg-blue-500 hover:bg-blue-700"
+                        (click)="openEditDialog(agency)">
+                        Edit
+                    </button>
+                </td>
             </tr>
         </tbody>
+        
     </table>
+
     <mat-paginator [length]="filteredAgencies.length"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20]">
-</mat-paginator>
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[5, 10, 20]">
+    </mat-paginator>
 </div>

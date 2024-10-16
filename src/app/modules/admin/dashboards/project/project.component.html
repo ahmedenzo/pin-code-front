@@ -247,91 +247,9 @@
                                 </div>
                             </div>
                             <!-- Task distribution -->
-                            <div class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                                <div class="flex flex-col sm:flex-row items-start justify-between">
-                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Task Distribution</div>
-                                    <div class="mt-3 sm:mt-0 sm:ml-2">
-                                        <mat-button-toggle-group
-                                            value="this-week"
-                                            #taskDistributionWeekSelector="matButtonToggleGroup">
-                                            <mat-button-toggle value="last-week">Last Week</mat-button-toggle>
-                                            <mat-button-toggle value="this-week">This Week</mat-button-toggle>
-                                        </mat-button-toggle-group>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col flex-auto mt-6">
-                                    <apx-chart
-                                        class="flex-auto w-full h-80"
-                                        [chart]="chartTaskDistribution.chart"
-                                        [labels]="chartTaskDistribution.labels"
-                                        [legend]="chartTaskDistribution.legend"
-                                        [plotOptions]="chartTaskDistribution.plotOptions"
-                                        [series]="chartTaskDistribution.series[taskDistributionWeekSelector.value]"
-                                        [states]="chartTaskDistribution.states"
-                                        [stroke]="chartTaskDistribution.stroke"
-                                        [theme]="chartTaskDistribution.theme"
-                                        [tooltip]="chartTaskDistribution.tooltip"
-                                        [yaxis]="chartTaskDistribution.yaxis"></apx-chart>
-                                </div>
-                                <div class="grid grid-cols-2 border-t divide-x -m-6 mt-4 bg-gray-50 dark:bg-transparent">
-                                    <div class="flex flex-col items-center justify-center p-6 sm:p-8">
-                                        <div class="text-5xl font-semibold leading-none tracking-tighter">
-                                            {{data.taskDistribution.overview[taskDistributionWeekSelector.value]['new']}}
-                                        </div>
-                                        <div class="mt-1 text-center text-secondary">New tasks</div>
-                                    </div>
-                                    <div class="flex flex-col items-center justify-center p-6 sm:p-8">
-                                        <div class="text-5xl font-semibold leading-none tracking-tighter">
-                                            {{data.taskDistribution.overview[taskDistributionWeekSelector.value]['completed']}}
-                                        </div>
-                                        <div class="mt-1 text-center text-secondary">Completed tasks</div>
-                                    </div>
-                                </div>
-                            </div>
+                           
                             <!-- Schedule -->
-                            <div class="sm:col-span-2 md:col-span-4 lg:col-span-2 flex flex-col flex-auto p-6 bg-card shadow rounded-2xl overflow-hidden">
-                                <div class="flex flex-col sm:flex-row items-start justify-between">
-                                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Schedule</div>
-                                    <div class="mt-3 sm:mt-0 sm:ml-2">
-                                        <mat-button-toggle-group
-                                            value="today"
-                                            #scheduleDaySelector="matButtonToggleGroup">
-                                            <mat-button-toggle value="today">Today</mat-button-toggle>
-                                            <mat-button-toggle value="tomorrow">Tomorrow</mat-button-toggle>
-                                        </mat-button-toggle-group>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col mt-2 divide-y">
-                                    <ng-container *ngFor="let scheduleItem of data.schedule[scheduleDaySelector.value]; trackBy: trackByFn">
-                                        <div class="flex flex-row items-center justify-between py-4 px-0.5">
-                                            <div class="flex flex-col">
-                                                <div class="font-medium">{{scheduleItem.title}}</div>
-                                                <div class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3">
-                                                    <ng-container *ngIf="scheduleItem.time">
-                                                        <div class="flex items-center">
-                                                            <mat-icon
-                                                                class="icon-size-5 text-hint"
-                                                                [svgIcon]="'heroicons_solid:clock'"></mat-icon>
-                                                            <div class="ml-1.5 text-md text-secondary">{{scheduleItem.time}}</div>
-                                                        </div>
-                                                    </ng-container>
-                                                    <ng-container *ngIf="scheduleItem.location">
-                                                        <div class="flex items-center">
-                                                            <mat-icon
-                                                                class="icon-size-5 text-hint"
-                                                                [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-                                                            <div class="ml-1.5 text-md text-secondary">{{scheduleItem.location}}</div>
-                                                        </div>
-                                                    </ng-container>
-                                                </div>
-                                            </div>
-                                            <button mat-icon-button>
-                                                <mat-icon [svgIcon]="'heroicons_mini:chevron-right'"></mat-icon>
-                                            </button>
-                                        </div>
-                                    </ng-container>
-                                </div>
-                            </div>
+ 
                         </div>
                     </ng-template>
                 </mat-tab>

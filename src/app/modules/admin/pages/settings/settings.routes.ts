@@ -7,3 +7,5 @@ export default [
         component: SettingsComponent,
     },
 ] as Routes;
+
+

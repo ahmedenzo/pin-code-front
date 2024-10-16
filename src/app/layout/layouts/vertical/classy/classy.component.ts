@@ -49,6 +49,8 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
     isScreenSmall: boolean;
     navigation: Navigation;
     user: User;
+    agencyName : any;
+    agencyCode : any;
     role: string[] = [];
     id: string | null = null; // Store the user ID
     private subscriptions: Subscription = new Subscription();
@@ -101,9 +103,10 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
                 this.id = user.id; // Get the user ID
       
                 // Check user role and fetch user details if Admin
-                if (this.role.includes('ROLE_ADMIN')) {
-                  this.fetchUserById(this.id);
-                }
+                if (this.role.includes('ROLE_ADMIN') || this.role.includes('ROLE_USER')) {
+                  this.fetchUserById(this.id); 
+              }
+          
               }
             })
           );
@@ -128,22 +131,38 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
             });
     }
     private fetchUserById(userId: string | null): void {
-        if (userId) {
+      if (userId) {
           this.subscriptions.add(
-            this._userService.getUserById(userId).subscribe(
-              (user: User) => {
-                console.log('User details ahmedddddd:', user);
-          
-                this.bankName = user.bank?.name || null; 
-                this.bankLogo = user.bank?.logo || null; 
-              },
-              (error) => {
-                console.error('Error fetching user by ID:', error);
-              }
-            )
+              this._userService.getUserById(userId).subscribe(
+                  (user: User) => {
+                      console.log('User details:', user);
+                      if (this.role.includes('ROLE_ADMIN')){
+                      // Fetch and set bank details
+                      this.bankName = user.bank?.name || null;
+                      this.bankLogo = user.bank?.logo || null;
+                      }
+                      // If the role is 'ROLE_USER', fetch and set agency details
+                      if (this.role.includes('ROLE_USER')) {
+                          if (user?.agency) {
+                              this.bankName = user.bank?.name || null; 
+                              this.agencyName = user?.agency.name || null;
+                              this.agencyCode = user?.agency.agencyCode || null;
+                              this.bankLogo = user.bank?.logo || null;
+                              console.log('Agency details:', this.agencyName, this.agencyCode);
+                          } else {
+                              console.warn('No agency details found for the user.');
+                          }
+                      }
+                  },
+                  (error) => {
+                      console.error('Error fetching user by ID:', error);
+                  }
+              )
           );
-        }
       }
+  }
+  
+      
       base64ToBlob(base64: string, type: string): Blob {
         const byteCharacters = atob(base64);
         const byteNumbers = new Uint8Array(byteCharacters.length);

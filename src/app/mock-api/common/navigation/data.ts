@@ -102,7 +102,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 ],
             },
             {
-
+*/
             {
                 id      : 'apps.help-center',
                 title   : 'Help Center',
@@ -110,19 +110,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 icon    : 'heroicons_outline:information-circle',
                 link    : '/apps/help-center',
                 children: [
-                    {
-                        id        : 'apps.help-center.home',
-                        title     : 'Home',
-                        type      : 'basic',
-                        link      : '/apps/help-center',
-                        exactMatch: true,
-                    },
-                    {
-                        id   : 'apps.help-center.faqs',
-                        title: 'FAQs',
-                        type : 'basic',
-                        link : '/apps/help-center/faqs',
-                    },
+
                     {
                         id   : 'apps.help-center.guides',
                         title: 'Guides',
@@ -136,7 +124,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                         link : '/apps/help-center/support',
                     },
                 ],
-            },
+            },/*
             {
                 id   : 'apps.mailbox',
                 title: 'Mailbox',
@@ -960,55 +948,28 @@ export const defaultNavigation: FuseNavigationItem[] = [
     {
         id  : 'divider-1',
         type: 'divider',
-    },
+    },*/
     {
         id      : 'documentation',
-        title   : 'Documentation',
-        subtitle: 'Everything you need to know about Fuse',
+        title   : 'Pin Sender Section',
+        subtitle: 'Pin Sender Secure SMS',
         type    : 'group',
         icon    : 'heroicons_outline:information-circle',
         children: [
             {
                 id   : 'documentation.changelog',
-                title: 'Changelog',
+                title: 'Pin Sender ',
                 type : 'basic',
-                icon : 'heroicons_outline:megaphone',
+                icon    : 'heroicons_outline:paper-airplane',
                 link : '/docs/changelog',
                 badge: {
-                    title  : '19.0.0',
+                    title  : '1.0.0',
                     classes: 'px-2 bg-yellow-300 text-black rounded-full',
                 },
             },
-            {
-                id   : 'documentation.guides',
-                title: 'Guides',
-                type : 'basic',
-                icon : 'heroicons_outline:book-open',
-                link : '/docs/guides',
-            },
-            {
-                id   : 'user-interface.material-components',
-                title: 'Material Components',
-                type : 'basic',
-                icon : 'heroicons_outline:square-3-stack-3d',
-                link : '/ui/material-components',
-            },
-            {
-                id   : 'user-interface.fuse-components',
-                title: 'Fuse Components',
-                type : 'basic',
-                icon : 'heroicons_outline:square-3-stack-3d',
-                link : '/ui/fuse-components',
-            },
-            {
-                id   : 'user-interface.other-components',
-                title: 'Other Components',
-                type : 'basic',
-                icon : 'heroicons_outline:square-3-stack-3d',
-                link : '/ui/other-components',
-            },
+           
         ],
-    },
+    },/*
     {
         id  : 'divider-2',
         type: 'divider',

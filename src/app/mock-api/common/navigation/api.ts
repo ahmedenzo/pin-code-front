@@ -1,88 +1,79 @@
 import { Injectable } from '@angular/core';
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { FuseMockApiService } from '@fuse/lib/mock-api';
-import { compactNavigation, defaultNavigation, futuristicNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
+import { defaultNavigation, compactNavigation, futuristicNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
 import { cloneDeep } from 'lodash-es';
+import { UserService } from 'app/core/user/user.service'; // Import UserService
 
-@Injectable({providedIn: 'root'})
-export class NavigationMockApi
-{
+@Injectable({ providedIn: 'root' })
+export class NavigationMockApi {
     private readonly _compactNavigation: FuseNavigationItem[] = compactNavigation;
     private readonly _defaultNavigation: FuseNavigationItem[] = defaultNavigation;
     private readonly _futuristicNavigation: FuseNavigationItem[] = futuristicNavigation;
     private readonly _horizontalNavigation: FuseNavigationItem[] = horizontalNavigation;
 
-    /**
-     * Constructor
-     */
-    constructor(private _fuseMockApiService: FuseMockApiService)
-    {
+    constructor(
+        private _fuseMockApiService: FuseMockApiService,
+        private _userService: UserService  // Inject UserService
+    ) {
         // Register Mock API handlers
         this.registerHandlers();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
+    registerHandlers(): void {
+        this._fuseMockApiService.onGet('api/common/navigation').reply(() => {
+            // Get user roles from the UserService
+            const roles = this._userService.getRoles();
+            const isSuperAdmin = roles?.includes('ROLE_SUPER_ADMIN');
+            const isAdmin = roles?.includes('ROLE_ADMIN');
+            const isuser = roles?.includes('ROLE_USER');
+
+            // Clone the navigation arrays to avoid mutating the original data
+            const compactNav = cloneDeep(this._compactNavigation);
+            const defaultNav = cloneDeep(this._defaultNavigation);
+            const futuristicNav = cloneDeep(this._futuristicNavigation);
+            const horizontalNav = cloneDeep(this._horizontalNavigation);
+
+            // Filter or modify navigation based on user roles
+            if (!isSuperAdmin) {
+                // Remove "File Manager" or any other restricted items for non-Super Admins
+                this.removeNavigationItem(defaultNav, 'pages.file-manager');
+            }
+            if (!isuser) {
+                // Remove "File Manager" or any other restricted items for non-Super Admins
+                this.removeNavigationItem(defaultNav, 'apps.help-center');
+                this.removeNavigationItem(defaultNav, 'apps.help-center.guides');
+                this.removeNavigationItem(defaultNav, 'apps.help-center.support');
+                this.removeNavigationItem(defaultNav, 'documentation.changelog');
+                this.removeNavigationItem(defaultNav, 'documentation');
+            } 
+            if (!isAdmin && !isSuperAdmin ) {
+                // Remove "File Manager" or any other restricted items for non-Super Admins
+                this.removeNavigationItem(defaultNav, 'pages.file-manager');
+                this.removeNavigationItem(defaultNav, 'pages.settings');
+            }
+
+            // Return the navigation
+            return [200, {
+                compact: compactNav,
+                default: defaultNav,
+                futuristic: futuristicNav,
+                horizontal: horizontalNav,
+            }];
+        });
+    }
 
     /**
-     * Register Mock API handlers
+     * Utility function to remove navigation item by ID
      */
-    registerHandlers(): void
-    {
-        // -----------------------------------------------------------------------------------------------------
-        // @ Navigation - GET
-        // -----------------------------------------------------------------------------------------------------
-        this._fuseMockApiService
-            .onGet('api/common/navigation')
-            .reply(() =>
-            {
-                // Fill compact navigation children using the default navigation
-                this._compactNavigation.forEach((compactNavItem) =>
-                {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
-                    {
-                        if ( defaultNavItem.id === compactNavItem.id )
-                        {
-                            compactNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
-                    });
-                });
-
-                // Fill futuristic navigation children using the default navigation
-                this._futuristicNavigation.forEach((futuristicNavItem) =>
-                {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
-                    {
-                        if ( defaultNavItem.id === futuristicNavItem.id )
-                        {
-                            futuristicNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
-                    });
-                });
-
-                // Fill horizontal navigation children using the default navigation
-                this._horizontalNavigation.forEach((horizontalNavItem) =>
-                {
-                    this._defaultNavigation.forEach((defaultNavItem) =>
-                    {
-                        if ( defaultNavItem.id === horizontalNavItem.id )
-                        {
-                            horizontalNavItem.children = cloneDeep(defaultNavItem.children);
-                        }
-                    });
-                });
-
-                // Return the response
-                return [
-                    200,
-                    {
-                        compact   : cloneDeep(this._compactNavigation),
-                        default   : cloneDeep(this._defaultNavigation),
-                        futuristic: cloneDeep(this._futuristicNavigation),
-                        horizontal: cloneDeep(this._horizontalNavigation),
-                    },
-                ];
-            });
+    private removeNavigationItem(navigation: FuseNavigationItem[], id: string): void {
+        navigation.forEach((item, index) => {
+            if (item.id === id) {
+                navigation.splice(index, 1);
+            }
+            if (item.children) {
+                this.removeNavigationItem(item.children, id);
+            }
+        });
     }
 }

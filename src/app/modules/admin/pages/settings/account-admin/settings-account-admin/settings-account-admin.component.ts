@@ -306,7 +306,7 @@ onUpdate(): void {
 
   
 
-  onSave(): void {
+  onSaveagence(): void {
     
   
       if (this.accountForm.valid ) {
@@ -341,8 +341,8 @@ onUpdate(): void {
               }
           });
       } else {
-          console.error('Form is invalid or logo file is missing');
-          this.errorMessage = 'Form is invalid or logo file is missing';
+          console.error('Form is invalid ');
+          this.errorMessage = 'Form is invalid ';
           setTimeout(() => {
               this.errorMessage = null;
               this.cdr.markForCheck();
