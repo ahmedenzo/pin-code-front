@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { NgFor } from '@angular/common';
-import { ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,6 +20,7 @@ import { NgOtpInputModule } from 'ng-otp-input';
 import { CrudService } from './crud.service';
 import { OtpInputDirective } from './otp-input.directive';
 import { AlertComponent } from '../alert/alert/alert.component';
+import { FuseAlertComponent, FuseAlertService } from '@fuse/components/alert';
 @Component({
     selector       : 'changelog',
     templateUrl    : './changelog.html',
@@ -44,14 +45,20 @@ import { AlertComponent } from '../alert/alert/alert.component';
         MatChipsModule,
         MatDatepickerModule,
         OtpInputDirective,
+        FuseAlertComponent,
         AlertComponent,
       ],
 })
 export class ChangelogComponent
 {
+  private _fuseAlertService = inject(FuseAlertService);
     firstFormGroup: FormGroup;
     otpFormGroup: FormGroup;
     otpSent = false;
+    errorMessage: string | null = null; //
+    successMessage: string | null = null;
+    errorMessage1: string | null = null; //
+    successMessage1: string | null = null;
     gsm: string = '';
     showSnackbar = false;
     isSuccess = false;
@@ -83,6 +90,7 @@ export class ChangelogComponent
     constructor(
       private _formBuilder: FormBuilder,
       private crudService: CrudService,
+      private cdr: ChangeDetectorRef
     ) {
       this.firstFormGroup = this._formBuilder.group({
         cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
@@ -183,11 +191,21 @@ export class ChangelogComponent
           (response) => {
             console.log('Verification successful:', response);
             this.otpSent = true;
-            this.showAlert(response.message, 'success');
+            this.successMessage = 'OTP Send successfully!';
+            this.errorMessage = null;  
+            this.cdr.markForCheck();
+            setTimeout(() => {
+              this.successMessage = null;
+          }, 1000);
           },
           (error) => {
             console.error('Verification failed:', error.error.message);
-            this.showAlert(error.error.message, 'error');
+            this.errorMessage = 'Failed To Send Otp : Check Information'; 
+            this.successMessage = null;  
+            this.cdr.markForCheck();
+            setTimeout(() => {
+                this.errorMessage = null;
+            }, 4000);
           }
         );
       }
@@ -200,7 +218,12 @@ export class ChangelogComponent
         this.crudService.validateOtp(this.gsm, otp).subscribe(
           (response) => {
             console.log('OTP validation successful:', response);
-            this.showAlert(response.message, 'success'); // Show success message
+            this.successMessage1 = 'OTP validation successful!';
+            this.errorMessage1 = null;  
+            this.cdr.markForCheck();
+            setTimeout(() => {
+              this.successMessage1 = null;
+          }, 1000);
             this.otpVerified = true; // Set OTP verification status to true
             
             // Wait 3 seconds before resetting forms and showing the cardholder form
@@ -213,7 +236,12 @@ export class ChangelogComponent
           },
           (error) => {
             console.error('OTP validation failed:', error.error.message);
-            this.showAlert(error.error.message, 'error'); // Show error message
+            this.errorMessage1 = 'OTP validation failed:'; 
+            this.successMessage1 = null;  
+            this.cdr.markForCheck();
+            setTimeout(() => {
+                this.errorMessage1 = null;
+            }, 4000);
           }
         );
       } else {
@@ -222,13 +250,7 @@ export class ChangelogComponent
     }
     
   
-    showAlert(message: string, type: 'success' | 'warning' | 'error') {
-      this.alertMessage = message;
-      this.alertType = type;
-      setTimeout(() => {
-        this.alertMessage = '';
-      }, 5000);
-    }
+
    
     cancelOtp(): void {
       this.otpSent = false; 
@@ -242,6 +264,14 @@ export class ChangelogComponent
       // Reset OTP form fields
       this.otpFormGroup.reset();
     }
+    showAlert(): void {
+      this._fuseAlertService.show('myAlertName'); 
+  }
+
+  dismissAlert(): void {
+      this._fuseAlertService.dismiss('myAlertName'); 
+  }
+
     
   }
   
