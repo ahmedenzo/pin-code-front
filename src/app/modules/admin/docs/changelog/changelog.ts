@@ -19,7 +19,7 @@ import { CardNumberFormatDirective } from './card-number-format.directive';
 import { NgOtpInputModule } from 'ng-otp-input';
 import { CrudService } from './crud.service';
 import { OtpInputDirective } from './otp-input.directive';
-import { AlertComponent } from '../../ui/fuse-components/components/alert/alert.component';
+import { AlertComponent } from '../alert/alert/alert.component';
 @Component({
     selector       : 'changelog',
     templateUrl    : './changelog.html',
@@ -86,9 +86,9 @@ export class ChangelogComponent
     ) {
       this.firstFormGroup = this._formBuilder.group({
         cardNumber: ['', [Validators.required, Validators.pattern(/^\d{16}$/)]],
-        cin: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-        phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-        cardExpiration: ['', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]],
+        nationalId: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+        gsm: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+        finalDate: ['', [Validators.required, Validators.pattern(/^\d{2}\/\d{2}$/)]],
       });
   
       this.otpFormGroup = this._formBuilder.group({
@@ -146,7 +146,7 @@ export class ChangelogComponent
       }
     
       // Set the formatted value back to the form control
-      this.firstFormGroup.get('cardExpiration')?.setValue(input.value, { emitEvent: false });
+      this.firstFormGroup.get('finalDate')?.setValue(input.value, { emitEvent: false });
     
       // Validate the month and year
       this.validateExpiration(value);
@@ -160,11 +160,11 @@ export class ChangelogComponent
       const currentYear = new Date().getFullYear() % 100;
     
       if (month < 1 || month > 12) {
-        this.firstFormGroup.get('cardExpiration')?.setErrors({ invalidMonth: true });
+        this.firstFormGroup.get('finalDate')?.setErrors({ invalidMonth: true });
       } else if (year < currentYear) {
-        this.firstFormGroup.get('cardExpiration')?.setErrors({ invalidYear: true });
+        this.firstFormGroup.get('finalDate')?.setErrors({ invalidYear: true });
       } else {
-        this.firstFormGroup.get('cardExpiration')?.setErrors(null);
+        this.firstFormGroup.get('finalDate')?.setErrors(null);
       }
     }
     

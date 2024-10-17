@@ -100,25 +100,37 @@ export class AuthService {
     /**
      * Sign out
      */
-    signOut(): Observable<any> {
-        const accessToken = this.accessToken;
-
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${accessToken}`
-        });
-
-        return this._httpClient.post(`${this.apiUrl}/api/auth/signout`, {}, { headers, withCredentials: true }).pipe(
-            tap(() => {
-                console.log('API sign-out success');
-                this._clearSession(); 
-            }),
-            catchError((error) => {
-                console.error('Error during sign-out: ', error);
-                this._clearSession(); 
-                return throwError(error);
-            }),
-        );
+/**
+ * Sign out
+ */
+signOut(): Observable<any> {
+    // Retrieve the user data from the cookie
+    const userDataCookie = this._CookieService.getCookie('userData');
+    
+    // Parse the userData from the cookie to get the sessionId
+    const userData = userDataCookie ? JSON.parse(userDataCookie) : null;
+    
+    if (!userData || !userData.sessionId) {
+        console.error('No sessionId found in userData');
+        return throwError(() => new Error('Session ID not found.'));
     }
+
+    // Send only the sessionId in the sign-out request
+    const sessionId = userData.sessionId;
+    
+    return this._httpClient.post(`${this.apiUrl}/api/auth/signout`, { sessionId }, { withCredentials: true }).pipe(
+        tap(() => {
+            console.log('API sign-out success');
+            this._clearSession(); 
+        }),
+        catchError((error) => {
+            console.error('Error during sign-out: ', error);
+            this._clearSession(); 
+            return throwError(error);
+        }),
+    );
+}
+
 
     /**
      * Clear session data

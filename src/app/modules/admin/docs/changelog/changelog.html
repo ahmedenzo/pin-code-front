@@ -79,10 +79,10 @@
                                         <div class="flex-20">
                                             <mat-form-field class="w-full">
                                                 <mat-label>Expiration</mat-label>
-                                                <input matInput formControlName="cardExpiration" placeholder="MM/YY" class="bigger-input" maxlength="5" (input)="formatExpiration($event)">
-                                                <mat-error *ngIf="firstFormGroup.controls.cardExpiration.hasError('required')">Expiration date is required</mat-error>
-                                                <mat-error *ngIf="firstFormGroup.controls.cardExpiration.hasError('invalidMonth')">Month must be between 01 and 12</mat-error>
-                                                <mat-error *ngIf="firstFormGroup.controls.cardExpiration.hasError('invalidYear')">Year must be valid</mat-error>
+                                                <input matInput formControlName="finalDate" placeholder="MM/YY" class="bigger-input" maxlength="5" (input)="formatExpiration($event)">
+                                                <mat-error *ngIf="firstFormGroup.controls.finalDate.hasError('required')">Expiration date is required</mat-error>
+                                                <mat-error *ngIf="firstFormGroup.controls.finalDate.hasError('invalidMonth')">Month must be between 01 and 12</mat-error>
+                                                <mat-error *ngIf="firstFormGroup.controls.finalDate.hasError('invalidYear')">Year must be valid</mat-error>
                                             </mat-form-field>
                                         </div>
                                     </div>
@@ -91,9 +91,9 @@
                                         <mat-form-field class="w-full">
                                             <mat-label>CIN</mat-label>
                                             <mat-icon matPrefix>badge</mat-icon>
-                                            <input matInput formControlName="cin" placeholder="Enter your 8-digit CIN" class="bigger-input" maxlength="8">
-                                            <mat-error *ngIf="firstFormGroup.controls.cin.hasError('required')">CIN is required</mat-error>
-                                            <mat-error *ngIf="firstFormGroup.controls.cin.hasError('pattern')">CIN must be 8 digits</mat-error>
+                                            <input matInput formControlName="nationalId" placeholder="Enter your 8-digit CIN" class="bigger-input" maxlength="8">
+                                            <mat-error *ngIf="firstFormGroup.controls.nationalId.hasError('required')">CIN is required</mat-error>
+                                            <mat-error *ngIf="firstFormGroup.controls.nationalId.hasError('pattern')">CIN must be 8 digits</mat-error>
                                         </mat-form-field>
                                     </div>
 
@@ -103,10 +103,10 @@
                                             <mat-icon matPrefix>phone</mat-icon>
                                             <div class="flex">
                                                 <span class="inline-flex items-center px-3 text-gray-500 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">+216</span>
-                                                <input matInput formControlName="phoneNumber" placeholder="Enter your 8-digit phone number" class="rounded-r-md bigger-input" maxlength="8">
+                                                <input matInput formControlName="gsm" placeholder="Enter your 8-digit phone number" class="rounded-r-md bigger-input" maxlength="8">
                                             </div>
-                                            <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('required')">Phone Number is required</mat-error>
-                                            <mat-error *ngIf="firstFormGroup.controls.phoneNumber.hasError('pattern')">Phone Number must be 8 digits</mat-error>
+                                            <mat-error *ngIf="firstFormGroup.controls.gsm.hasError('required')">Phone Number is required</mat-error>
+                                            <mat-error *ngIf="firstFormGroup.controls.gsm.hasError('pattern')">Phone Number must be 8 digits</mat-error>
                                         </mat-form-field>
                                     </div>
 
