@@ -13,9 +13,9 @@ export class CrudService {
 
   constructor(private http: HttpClient) { }
 
-  verifyCardholder(cardNumber: string, cin: string, phoneNumber: string, expirationDate: string): Observable<any> {
+  verifyCardholder(cardNumber: string, nationalId: string, gsm: string, finalDate: string): Observable<any> {
     const url = `${this.apiUrl1}/verify`;
-    const body = { cardNumber, cin, phoneNumber, expirationDate };
+    const body = { cardNumber, nationalId, gsm, finalDate };
     return this.http.post(url, body)
       .pipe(
         catchError(this.handleError<any>('verifyCardholder'))
@@ -38,3 +38,4 @@ export class CrudService {
     };
   }
 }
+
