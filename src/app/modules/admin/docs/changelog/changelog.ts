@@ -52,7 +52,7 @@ export class ChangelogComponent
     firstFormGroup: FormGroup;
     otpFormGroup: FormGroup;
     otpSent = false;
-    phoneNumber: string = '';
+    gsm: string = '';
     showSnackbar = false;
     isSuccess = false;
     snackbarMessage = '';
@@ -171,15 +171,15 @@ export class ChangelogComponent
     
     sendOtp() {
       if (this.firstFormGroup.valid) {
-        const { cardNumber, cin, phoneNumber, cardExpiration } = this.firstFormGroup.value;
+        const { cardNumber, nationalId, gsm, finalDate } = this.firstFormGroup.value;
     
         // Format the cardExpiration to MMYY
-        const formattedExpiration = cardExpiration.replace('/', '');
+        const formattedExpiration = finalDate.replace('/', '');
     
         // Prepend the country code to the phone number
-        this.phoneNumber = '00216' + phoneNumber;
+        this.gsm = '00216' + gsm;
     
-        this.crudService.verifyCardholder(cardNumber, cin, this.phoneNumber, formattedExpiration).subscribe(
+        this.crudService.verifyCardholder(cardNumber, nationalId, this.gsm, formattedExpiration).subscribe(
           (response) => {
             console.log('Verification successful:', response);
             this.otpSent = true;
@@ -197,7 +197,7 @@ export class ChangelogComponent
     verifyOtp(): void {
       if (this.otpFormGroup.valid) {
         const otp = Object.values(this.otpFormGroup.value).join('');
-        this.crudService.validateOtp(this.phoneNumber, otp).subscribe(
+        this.crudService.validateOtp(this.gsm, otp).subscribe(
           (response) => {
             console.log('OTP validation successful:', response);
             this.showAlert(response.message, 'success'); // Show success message
