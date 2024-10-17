@@ -85,6 +85,7 @@ export class SettingsPlanBillingComponent implements OnInit, AfterViewInit
             cardType: ['', Validators.required],
             serviceCode: ['', Validators.required],
             bankId: ['',Validators.required],
+            keyData: ['',Validators.required],
 
         });
 
@@ -125,6 +126,7 @@ export class SettingsPlanBillingComponent implements OnInit, AfterViewInit
             systemCode: bin.systemCode,
             cardType: bin.cardType,
             serviceCode: bin.serviceCode,
+            keyData: bin.keyData,
             bankId: bin.bankCode // Ensure this is the bank ID
         });
     

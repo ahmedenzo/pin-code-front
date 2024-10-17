@@ -177,7 +177,7 @@ export class ChangelogComponent
         const formattedExpiration = cardExpiration.replace('/', '');
     
         // Prepend the country code to the phone number
-        this.phoneNumber = '216' + phoneNumber;
+        this.phoneNumber = '00216' + phoneNumber;
     
         this.crudService.verifyCardholder(cardNumber, cin, this.phoneNumber, formattedExpiration).subscribe(
           (response) => {

@@ -33,7 +33,7 @@
 
 
 
-        <div class="grid sm:grid-cols-4 gap-6 w-full mt-3">
+        <div class="grid sm:grid-cols-5 gap-6 w-full mt-3">
             <!-- Email -->
             <div class="sm:col-span-2">
                 <mat-form-field
@@ -99,6 +99,22 @@
             </div>
 
             <div class="sm:col-span-2">
+                <mat-form-field
+                    class="w-full"
+                    [subscriptSizing]="'dynamic'">
+                    <mat-label>keyData</mat-label>
+                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:shield-check'" matPrefix></mat-icon>
+                    <input
+                        [formControlName]="'keyData'"
+                        matInput>
+                        <mat-error *ngIf="accountForm.get('keyData').hasError('required') && accountForm.get('keyData').touched">
+                            keyData is required
+                        </mat-error>
+                </mat-form-field>
+            </div>
+
+
+            <div class="sm:col-span-2">
                 <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
                     <mat-label>Bank</mat-label>
                     <mat-icon svgIcon="heroicons_outline:building-library"></mat-icon>
@@ -135,8 +151,9 @@
             
             
         </div>
-        <div class="flex items-center justify-end">
+        <div  class="flex items-center justify-end mt-6">
             <button
+            class="ml-4"
                 mat-stroked-button
                 type="button"
                 (click)="onCancel()">
