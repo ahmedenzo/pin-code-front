@@ -12,12 +12,11 @@
     </div>
 
     <div class="flex-auto p-6 sm:p-10">
-        <div class="prose prose-sm max-w-5xl">
+        <div class="prose prose-sm max-w-6xl">
             <ng-container>
+
                 <div class="mb-12 p-8 rounded-2xl shadow bg-skyblue"> 
-                    <div class="flex flex-col sm:flex-row items-start justify-start min-h-screen p-4 sm:p-10 gap-12">
-                       
-                        <div class="w-full max-w-3xl">
+                    <div class="w-full max-w-3xl">
                         <fuse-alert *ngIf="successMessage" [type]="'success'" [appearance]="'outline'">
                             <span fuseAlertTitle>Success</span>
                             {{ successMessage }}
@@ -28,8 +27,8 @@
                             <span fuseAlertTitle>Warn alert</span>
                             {{ errorMessage }}
                         </fuse-alert>
-
-
+    
+    
                         <fuse-alert *ngIf="successMessage1" [type]="'success'" [appearance]="'outline'">
                             <span fuseAlertTitle>Success</span>
                             {{ successMessage1 }}
@@ -41,6 +40,9 @@
                             {{ errorMessage1 }}
                         </fuse-alert>
                      </div>
+                    <div class="flex flex-col sm:flex-row items-start justify-start min-h-screen p-4 sm:p-10 gap-12">
+                       
+
 
 
                         <div class="prose prose-sm w-full sm:w-1/3 sm:mr-16 sm:order-2">
@@ -59,7 +61,7 @@
                         <!-- Form Section -->
                         <div class="flex flex-col items-center justify-center w-full sm:w-2/3 sm:order-1">
                             <!-- OTP Verification Form -->
-                            <ng-container *ngIf="otpSent && !otpVerified; else cardholderForm">
+                            <ng-container ng-container *ngIf="otpSent && !otpVerified; else cardholderForm" >
                                 <form [formGroup]="otpFormGroup" (ngSubmit)="verifyOtp()" class="flex flex-col mt-8 p-12 pb-4 bg-white rounded-2xl shadow overflow-hidden w-full max-w-lg">
                                     <div class="flex justify-end mb-4">
                                         <button type="button" class="text-gray-500 hover:text-gray-700 focus:outline-none" (click)="cancelOtp()">
@@ -69,7 +71,7 @@
                                         </button>
                                     </div>
                                     <div class="flex flex-col items-center">
-                                        <img src="assets/images/logo/opt.png" class="w-35 h-25 mb-4">
+                                        <img src="assets/images/logo/opt.png" class="w-22 h-22 mb-4">
                                         <h2>Verify your Code</h2>
                                         <p>Please enter the 6 digit code sent to {{ gsm }}</p>
                                         <div class="flex space-x-1 mt-4">
@@ -88,10 +90,9 @@
                                     </div>
                                 </form>
                             </ng-container>
-
                             <!-- Cardholder Form -->
                             <ng-template #cardholderForm>
-                                <form [formGroup]="firstFormGroup" (ngSubmit)="sendOtp()" class="flex flex-col mt-8 p-12 pb-4 bg-white rounded-2xl shadow overflow-hidden w-full max-w-lg">
+                                <form [formGroup]="firstFormGroup" (ngSubmit)="sendOtp()" class="flex flex-col mt-8 p-12 pb-4 bg-white rounded-2xl shadow overflow-hidden w-full max-w-2xl">
                                     <div class="flex w-full gap-4">
                                         <div class="flex-80">
                                             <mat-form-field class="w-full">
@@ -112,8 +113,8 @@
                                             </mat-form-field>
                                         </div>
                                     </div>
-
-                                    <div class="form-group">
+                            
+                                    <div class="form-group mt-4">
                                         <mat-form-field class="w-full">
                                             <mat-label>CIN</mat-label>
                                             <mat-icon matPrefix>badge</mat-icon>
@@ -122,8 +123,8 @@
                                             <mat-error *ngIf="firstFormGroup.controls.nationalId.hasError('pattern')">CIN must be 8 digits</mat-error>
                                         </mat-form-field>
                                     </div>
-
-                                    <div class="form-group">
+                            
+                                    <div class="form-group mt-4">
                                         <mat-form-field class="w-full">
                                             <mat-label>Phone Number</mat-label>
                                             <mat-icon matPrefix>phone</mat-icon>
@@ -135,13 +136,16 @@
                                             <mat-error *ngIf="firstFormGroup.controls.gsm.hasError('pattern')">Phone Number must be 8 digits</mat-error>
                                         </mat-form-field>
                                     </div>
-
+                            
                                     <div class="flex justify-center mt-4">
-                                        <button mat-raised-button color="primary" class="w-full smaller-button" type="submit" [disabled]="!firstFormGroup.valid">Send OTP</button>
+                                        <button mat-raised-button color="primary" class="w-full bigger-button" type="submit" [disabled]="!firstFormGroup.valid">Send OTP</button>
                                     </div>
-                                    
                                 </form>
                             </ng-template>
+                            
+                            
+                            
+                            
                         </div>
                     </div>
                 </div>

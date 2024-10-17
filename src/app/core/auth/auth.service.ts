@@ -115,10 +115,13 @@ signOut(): Observable<any> {
         return throwError(() => new Error('Session ID not found.'));
     }
 
-    // Send only the sessionId in the sign-out request
+    // Send the sessionId as a query parameter in the sign-out request
     const sessionId = userData.sessionId;
-    
-    return this._httpClient.post(`${this.apiUrl}/api/auth/signout`, { sessionId }, { withCredentials: true }).pipe(
+
+    // Log the sessionId to verify if it's present
+    console.log('Session ID:', sessionId);
+
+    return this._httpClient.post(`${this.apiUrl}/api/auth/signout?SessionId=${sessionId}`, null, { withCredentials: true }).pipe(
         tap(() => {
             console.log('API sign-out success');
             this._clearSession(); 
@@ -130,6 +133,7 @@ signOut(): Observable<any> {
         }),
     );
 }
+
 
 
     /**
