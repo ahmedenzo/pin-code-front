@@ -1,3 +1,148 @@
+/* Adjust the form container to align to the left */
+.ng-container-wrapper {
+  display: flex;
+  justify-content: flex-start; /* Align to the left */
+  align-items: flex-start; /* Align to the top */
+  width: 100%; /* Full width */
+  height: auto; /* Adjust height based on the content */
+  padding-top: 0; /* Remove extra padding */
+}
+
+.flex-autoo {
+
+  justify-content: flex-start; /* Align horizontally to the left */
+  align-items: flex-start; /* Align vertically to the top */
+  min-height: auto; /* Adjust height based on content */
+  padding-top: 0; /* Remove padding */
+}
+
+/* Adjust the container that holds the form */
+.form-style {
+  margin-left: 0; /* Align form to the left */
+  border: 2px solid #007bff; /* Blue border */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for modern look */
+  background-color: white;
+  padding: 20px;
+  max-width: 700px; /* Keep the width of the form */
+  width: 100%; /* Full width of the container */
+}
+
+/* Adjust the form input fields for a modern look */
+.bigger-input {
+  height: 3.5rem;    /* Adjusted for a modern look */
+  font-size: 1.2rem; /* Adjusted font size */
+  padding: 0.75rem;  /* Adjusted padding */
+}
+
+/* Reduce the vertical space between header and form */
+h2 {
+  margin-bottom: 10px; /* Reduce margin for tighter spacing */
+}
+
+/* Modern button styling */
+.smaller-button {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.90rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.smaller-button:hover {
+  background-color: #0056b3;
+}
+
+/* Center and align button within the form */
+.btn-wrapper {
+  display: flex;
+  justify-content: flex-start; /* Align button to the left */
+}
+
+/* OTP form container with modern style */
+.otp-form-style {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0; /* Remove extra margin */
+  text-align: left; /* Align text to the left */
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modern styling for OTP input fields */
+.otp-input-modern {
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 0.5rem;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.otp-input-modern:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Modern button styling */
+.modern-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.90rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modern-button:hover {
+  background-color: #218838;
+}
+
+/* Styling for the main alert messages */
+.fuse-alert {
+  margin-bottom: 15px;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #007bff;
+  background-color: #f0f7ff;
+}
+
+/* Adjust additional text styling */
+.text-gray-600 {
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+/* Adjust the background container and remove the gap */
+.bg-skyblue {
+  background-color: #e1eff3; /* Soft blue background */
+  padding: 0; /* Remove unnecessary padding */
+  margin-top: 0; /* Reduce margin */
+}
+
+.w-full {
+  width: 100%;
+}
+
+/* Consistent spacing between fields */
+.mt-4 {
+  margin-top: 1rem;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+/* Custom styling for form sections */
 .flex-80 {
   flex: 0 0 70%; /* Card Number takes 70% of the width */
 }
@@ -8,35 +153,4 @@
 
 .gap-4 {
   gap: 1rem; /* Space between Card Number and Expiration fields */
-}
-
-.bigger-input {
-  height: 6rem;  /* Larger height for input fields */
-  font-size: 1.5rem; /* Larger font size */
-  padding: 1rem;  /* Increase padding for the input */
-}
-
-.bigger-button {
-  padding: 1.25rem 1.5rem; /* Larger button */
-  font-size: 1.5rem; /* Larger button text size */
-}
-
-.max-w-2xl {
-  max-width: 50rem; /* Form width remains the same */
-}
-
-.mt-4 {
-  margin-top: 1rem; /* Spacing between fields */
-}
-
-.mat-form-field {
-  width: 100%;
-}
-
-.w-full {
-  width: 100%;
-}
-
-.bg-white {
-  background-color: #f0f0f0; /* Light grey or white for form backgrounds */
 }

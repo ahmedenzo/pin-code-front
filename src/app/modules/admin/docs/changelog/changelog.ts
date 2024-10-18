@@ -55,6 +55,7 @@ export class ChangelogComponent
     firstFormGroup: FormGroup;
     otpFormGroup: FormGroup;
     otpSent = false;
+ 
     errorMessage: string | null = null; //
     successMessage: string | null = null;
     errorMessage1: string | null = null; //
@@ -104,9 +105,9 @@ export class ChangelogComponent
         otp2: ['', [Validators.required, Validators.maxLength(1)]],
         otp3: ['', [Validators.required, Validators.maxLength(1)]],
         otp4: ['', [Validators.required, Validators.maxLength(1)]],
-        otp5: ['', [Validators.required, Validators.maxLength(1)]],
-        otp6: ['', [Validators.required, Validators.maxLength(1)]],
+
       });
+      this.cdr.markForCheck();
     }
     cardNumberValidator(control: AbstractControl): { [key: string]: any } | null {
       const value = control.value ? control.value.replace(/\D/g, '') : '';
@@ -181,73 +182,77 @@ export class ChangelogComponent
       if (this.firstFormGroup.valid) {
         const { cardNumber, nationalId, gsm, finalDate } = this.firstFormGroup.value;
     
-        // Format the cardExpiration to MMYY
         const formattedExpiration = finalDate.replace('/', '');
-    
-        // Prepend the country code to the phone number
         this.gsm = '00216' + gsm;
     
         this.crudService.verifyCardholder(cardNumber, nationalId, this.gsm, formattedExpiration).subscribe(
           (response) => {
             console.log('Verification successful:', response);
             this.otpSent = true;
-            this.successMessage = 'OTP Send successfully!';
-            this.errorMessage = null;  
-            this.cdr.markForCheck();
+            this.successMessage = 'OTP Sent successfully!';
+            this.errorMessage = null;
+            this.cdr.markForCheck(); // Trigger change detection
+    
             setTimeout(() => {
               this.successMessage = null;
-          }, 1000);
+              this.cdr.markForCheck(); // Ensure change detection is triggered
+            }, 2000); // Show success message for 1 second
           },
           (error) => {
             console.error('Verification failed:', error.error.message);
-            this.errorMessage = 'Failed To Send Otp : Check Information'; 
-            this.successMessage = null;  
-            this.cdr.markForCheck();
+            this.errorMessage = 'Failed to Send OTP: Check Information';
+            this.successMessage = null;
+            this.cdr.markForCheck(); // Trigger change detection
+    
             setTimeout(() => {
-                this.errorMessage = null;
-            }, 4000);
+              this.errorMessage = null;
+              this.cdr.markForCheck(); // Ensure change detection is triggered
+            }, 4000); // Show error message for 4 seconds
           }
         );
       }
     }
     
-  
-    verifyOtp(): void {
-      if (this.otpFormGroup.valid) {
-        const otp = Object.values(this.otpFormGroup.value).join('');
-        this.crudService.validateOtp(this.gsm, otp).subscribe(
-          (response) => {
-            console.log('OTP validation successful:', response);
-            this.successMessage1 = 'OTP validation successful!';
-            this.errorMessage1 = null;  
+     verifyOtp(): void {
+    if (this.otpFormGroup.valid) {
+      const otp = Object.values(this.otpFormGroup.value).join('');
+      this.crudService.validateOtp(this.gsm, otp).subscribe(
+        (response) => {
+          console.log('OTP validation successful:', response);
+          this.successMessage = 'OTP validation successful';
+          this.errorMessage = null;
+          this.otpVerified = true;
+          this.cdr.markForCheck();
+
+          setTimeout(() => {
+            this.successMessage = null;
             this.cdr.markForCheck();
-            setTimeout(() => {
-              this.successMessage1 = null;
-          }, 1000);
-            this.otpVerified = true; // Set OTP verification status to true
-            
-            // Wait 3 seconds before resetting forms and showing the cardholder form
-            setTimeout(() => {
-              this.resetOtpForm(); // Reset OTP form fields
-              this.resetCardholderForm(); // Reset cardholder form fields
-              this.otpSent = false; // Show the cardholder form
-              this.otpVerified = false; // Reset OTP verification status
-            }, 2000);
-          },
-          (error) => {
-            console.error('OTP validation failed:', error.error.message);
-            this.errorMessage1 = 'OTP validation failed:'; 
-            this.successMessage1 = null;  
+          }, 3000);
+
+          setTimeout(() => {
+            this.resetOtpForm();
+            this.resetCardholderForm();
+            this.otpSent = false;
+            this.otpVerified = false;
             this.cdr.markForCheck();
-            setTimeout(() => {
-                this.errorMessage1 = null;
-            }, 4000);
-          }
-        );
-      } else {
-        console.log('Form is invalid');
-      }
+          }, 2000);
+        },
+        (error) => {
+          console.error('OTP validation failed:', error.error.message);
+          this.errorMessage = 'OTP validation failed';
+          this.successMessage = null;
+          this.cdr.markForCheck();
+
+          setTimeout(() => {
+            this.errorMessage = null;
+            this.cdr.markForCheck();
+          }, 4000);
+        }
+      );
+    } else {
+      console.log('OTP form is invalid');
     }
+  }
     
   
 
